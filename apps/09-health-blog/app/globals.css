@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { --font-sans: "Pretendard", -apple-system, system-ui, sans-serif; }
+body { background: #f7f4ec; color: #12312e; -webkit-font-smoothing: antialiased; }
+:focus-visible { outline: 3px solid #0f6e56; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) { * { transition-duration: 0.01ms !important; } }
