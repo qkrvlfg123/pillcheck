@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>필체크 — 주변 약국·병원 찾기</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <style>
+    :root { --teal:#0f6e56; --teal-deep:#085041; --teal-soft:#e1f5ee; --cream:#f7f4ec; --ink:#12312e; --amber:#ba7517; --coral:#d85a30; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:"Pretendard",system-ui,sans-serif; background:var(--cream); color:var(--ink); }
+    header { background:#fff; border-bottom:1px solid var(--teal-soft); padding:16px 20px; }
+    header h1 { margin:0; font-size:22px; color:var(--teal-deep); }
+    header p { margin:6px 0 0; font-size:15px; color:#777; }
+
+    .banner { background:var(--coral); color:#fff; padding:14px 20px; font-size:16px; display:none; }
+    .banner.show { display:block; }
+
+    .filters { display:flex; gap:8px; padding:14px 20px; background:#fff; border-bottom:1px solid var(--teal-soft); flex-wrap:wrap; }
+    .filter { padding:10px 20px; border:2px solid var(--teal); background:#fff; color:var(--teal-deep); border-radius:22px; font-size:16px; cursor:pointer; }
+    .filter.on { background:var(--teal); color:#fff; }
+
+    .layout { display:flex; height:calc(100vh - 180px); }
+    #map { flex:1.4; }
+    .list { flex:1; overflow-y:auto; padding:12px; background:var(--cream); max-width:380px; }
+    .place { background:#fff; border:1px solid var(--teal-soft); border-radius:12px; padding:14px; margin-bottom:10px; cursor:pointer; }
+    .place:hover { border-color:var(--teal); }
+    .place h3 { margin:0 0 4px; font-size:17px; color:var(--ink); }
+    .place .cat { font-size:13px; color:var(--teal); }
+    .place .addr { font-size:14px; color:#666; margin:4px 0; }
+    .place .actions { display:flex; gap:8px; margin-top:8px; }
+    .place a { flex:1; text-align:center; padding:8px; border-radius:8px; font-size:14px; text-decoration:none; }
+    .place .tel { background:var(--teal-soft); color:var(--teal-deep); }
+    .place .map { background:var(--cream); color:var(--ink); border:1px solid #ddd; }
+
+    .notice { padding:14px 20px; font-size:13px; color:#999; text-align:center; background:#fff; }
+    .apikey-warn { padding:40px 20px; text-align:center; color:var(--coral); font-size:16px; line-height:1.7; }
+
+    @media (max-width:640px) {
+      .layout { flex-direction:column; height:auto; }
+      #map { height:50vh; }
+      .list { max-width:none; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>주변 약국·병원 찾기</h1>
+    <p>약 상담에서 주의가 나왔다면, 가까운 곳에서 상담하세요</p>
+  </header>
+
+  <div class="banner" id="banner">
+    복용 중인 약에서 주의가 필요한 조합이 확인됐어요. 가까운 약국에서 약사와 상담해보세요.
+  </div>
+
+  <div class="filters">
+    <button class="filter on" data-type="약국" onclick="setFilter(this,'약국')">💊 약국</button>
+    <button class="filter" data-type="병원" onclick="setFilter(this,'병원')">🏥 병원</button>
+    <button class="filter" data-type="내과" onclick="setFilter(this,'내과')">🩺 내과</button>
+  </div>
+
+  <div id="content">
+    <div class="layout">
+      <div id="map"></div>
+      <div class="list" id="list"></div>
+    </div>
+    <p class="notice">
+      카카오맵 제공 · 영업/진료 시간은 실제와 다를 수 있으니 방문 전 확인하세요.
+      위치 정보는 이번 검색에만 사용하고 저장하지 않습니다.
+    </p>
+  </div>
+
+  <!-- 카카오맵 SDK: YOUR_JS_KEY 를 본인 JavaScript 키로 바꾸세요 -->
+  <script src="//dapi.kakao.com/v2/maps/sdk.js?appkey=YOUR_JS_KEY&libraries=services&autoload=false"></script>
+  <script>
+    // 필체크 챗봇에서 ?from=pillcheck&risk=high 로 들어오면 배너 표시
+    const params = new URLSearchParams(location.search);
+    if (params.get("from") === "pillcheck") {
+      document.getElementById("banner").classList.add("show");
+    }
+
+    let map, ps, infowindow, markers = [];
+    let currentType = "약국";
+
+    // 카테고리 코드: 약국 PM9, 병원 HP8
+    const CATEGORY = { "약국": "PM9", "병원": "HP8" };
+
+    function initMap() {
+      if (typeof kakao === "undefined" || !kakao.maps) {
+        showApiKeyWarning();
+        return;
+      }
+      kakao.maps.load(() => {
+        const container = document.getElementById("map");
+        map = new kakao.maps.Map(container, {
+          center: new kakao.maps.LatLng(37.5665, 126.9780), // 기본: 서울시청
+          level: 4,
+        });
+        ps = new kakao.maps.services.Places(map);
+        infowindow = new kakao.maps.InfoWindow({ zIndex: 1 });
+
+        // 내 위치로 이동 (권한 허용 시)
+        if (navigator.geolocation) {
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              const loc = new kakao.maps.LatLng(pos.coords.latitude, pos.coords.longitude);
+              map.setCenter(loc);
+              search();
+            },
+            () => search()  // 거부하면 기본 위치로 검색
+          );
+        } else {
+          search();
+        }
+
+        // 지도 이동 멈추면 다시 검색
+        kakao.maps.event.addListener(map, "idle", search);
+      });
+    }
+
+    function setFilter(btn, type) {
+      document.querySelectorAll(".filter").forEach((b) => b.classList.remove("on"));
+      btn.classList.add("on");
+      currentType = type;
+      search();
+    }
+
+    function search() {
+      if (!ps) return;
+      clearMarkers();
+      const cb = (data, status) => {
+        if (status === kakao.maps.services.Status.OK) {
+          renderPlaces(data);
+        } else {
+          document.getElementById("list").innerHTML =
+            '<p style="padding:20px;color:#999;">주변에 결과가 없어요. 지도를 옮겨보세요.</p>';
+        }
+      };
+      // 약국·병원은 카테고리 코드, 내과는 키워드 검색
+      if (CATEGORY[currentType]) {
+        ps.categorySearch(CATEGORY[currentType], cb, { useMapBounds: true });
+      } else {
+        ps.keywordSearch(currentType, cb, { useMapBounds: true });
+      }
+    }
+
+    function renderPlaces(places) {
+      const list = document.getElementById("list");
+      list.innerHTML = "";
+      places.forEach((place) => {
+        // 마커
+        const pos = new kakao.maps.LatLng(place.y, place.x);
+        const marker = new kakao.maps.Marker({ map, position: pos });
+        markers.push(marker);
+        kakao.maps.event.addListener(marker, "click", () => {
+          infowindow.setContent(
+            `<div style="padding:8px;font-size:14px;">${place.place_name}</div>`
+          );
+          infowindow.open(map, marker);
+        });
+
+        // 목록 카드
+        const div = document.createElement("div");
+        div.className = "place";
+        div.innerHTML = `
+          <h3>${place.place_name}</h3>
+          <div class="cat">${place.category_name || currentType}</div>
+          <div class="addr">${place.road_address_name || place.address_name || ""}</div>
+          <div class="actions">
+            ${place.phone ? `<a class="tel" href="tel:${place.phone}">📞 전화</a>` : ""}
+            <a class="map" href="${place.place_url}" target="_blank">🗺️ 길찾기</a>
+          </div>
+        `;
+        div.onclick = (e) => {
+          if (e.target.tagName === "A") return;
+          map.setCenter(pos);
+          infowindow.setContent(`<div style="padding:8px;font-size:14px;">${place.place_name}</div>`);
+          infowindow.open(map, marker);
+        };
+        list.appendChild(div);
+      });
+    }
+
+    function clearMarkers() {
+      markers.forEach((m) => m.setMap(null));
+      markers = [];
+    }
+
+    function showApiKeyWarning() {
+      document.getElementById("content").innerHTML = `
+        <div class="apikey-warn">
+          카카오맵 키가 필요해요.<br /><br />
+          index.html의 <b>YOUR_JS_KEY</b>를<br />
+          카카오 개발자센터에서 받은 JavaScript 키로 바꿔주세요.<br /><br />
+          (developers.kakao.com → 앱 만들기 → JavaScript 키)
+        </div>`;
+    }
+
+    // SDK 로드
+    window.addEventListener("load", initMap);
+  </script>
+</body>
+</html>
