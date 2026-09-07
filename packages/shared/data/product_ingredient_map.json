@@ -1,0 +1,677 @@
+{
+  "_meta": {
+    "설명": "국내 흔한 의약품 제품명 → 주성분 매핑. 같은 브랜드도 종류별 성분이 다를 수 있어 개별 등재.",
+    "근거": "각 제품 성분은 식약처 의약품통합정보(nedrug.mfds.go.kr) 및 언론/약사 확인 자료로 검증. 없는 제품은 e약은요/의약품허가정보 API로 실시간 조회(dur_client 참조).",
+    "매핑규칙": "ingredient_tags는 packages/shared/data/drug_dictionary.json의 성분 태그 체계와 동일. 이 태그로 효능군 중복·상호작용을 판정.",
+    "주의": "제품 성분·함량은 리뉴얼로 바뀔 수 있음. 최신은 식약처 API로 확인."
+  },
+  "products": [
+    {
+      "product": "타이레놀",
+      "aliases": [
+        "타이레놀정",
+        "타이레놀8시간이알서방정",
+        "어린이타이레놀"
+      ],
+      "ingredients": [
+        "아세트아미노펜"
+      ],
+      "ingredient_tags": [
+        "analgesic",
+        "antipyretic",
+        "hepatotoxic",
+        "acetaminophen"
+      ],
+      "class_hint": "ACETAMINOPHEN",
+      "source": "식약처 의약품정보"
+    },
+    {
+      "product": "게보린",
+      "aliases": [
+        "게보린정"
+      ],
+      "ingredients": [
+        "아세트아미노펜",
+        "이소프로필안티피린",
+        "무수카페인"
+      ],
+      "ingredient_tags": [
+        "analgesic",
+        "antipyretic",
+        "hepatotoxic",
+        "cns_stimulant",
+        "acetaminophen"
+      ],
+      "class_hint": "COMBO_ANALGESIC",
+      "caution": "아세트아미노펜 함유 → 타이레놀 등과 겹치면 중복. 피린계(15세 미만 금기).",
+      "source": "경향신문/헬스경향 성분표(아세트아미노펜300+IPA150+카페인50)"
+    },
+    {
+      "product": "펜잘큐",
+      "aliases": [
+        "펜잘큐정",
+        "펜잘"
+      ],
+      "ingredients": [
+        "아세트아미노펜",
+        "에텐자미드",
+        "무수카페인"
+      ],
+      "ingredient_tags": [
+        "analgesic",
+        "antipyretic",
+        "hepatotoxic",
+        "cns_stimulant",
+        "acetaminophen"
+      ],
+      "class_hint": "COMBO_ANALGESIC",
+      "caution": "아세트아미노펜 함유 → 타이레놀 등과 중복 주의.",
+      "source": "경향신문 성분 확인(2008년 IPA 제거, 에텐자미드 추가)"
+    },
+    {
+      "product": "사리돈에이",
+      "aliases": [
+        "사리돈"
+      ],
+      "ingredients": [
+        "아세트아미노펜",
+        "이소프로필안티피린",
+        "무수카페인"
+      ],
+      "ingredient_tags": [
+        "analgesic",
+        "antipyretic",
+        "hepatotoxic",
+        "cns_stimulant",
+        "acetaminophen"
+      ],
+      "class_hint": "COMBO_ANALGESIC",
+      "caution": "아세트아미노펜 함유. 피린계.",
+      "source": "청년의사/약사회 자료"
+    },
+    {
+      "product": "이지엔6에이스",
+      "aliases": [
+        "이지엔6에이스연질캡슐"
+      ],
+      "ingredients": [
+        "아세트아미노펜"
+      ],
+      "ingredient_tags": [
+        "analgesic",
+        "antipyretic",
+        "hepatotoxic",
+        "acetaminophen"
+      ],
+      "class_hint": "ACETAMINOPHEN",
+      "caution": "타이레놀과 동일 성분(아세트아미노펜). 중복 주의.",
+      "source": "식약처/약사 확인(a-ha.io 약사답변)"
+    },
+    {
+      "product": "이지엔6애니",
+      "aliases": [
+        "이지엔6애니연질캡슐"
+      ],
+      "ingredients": [
+        "이부프로펜"
+      ],
+      "ingredient_tags": [
+        "analgesic",
+        "bleeding_risk",
+        "gi_risk"
+      ],
+      "class_hint": "NSAID",
+      "source": "식약처 의약품정보(이부프로펜)"
+    },
+    {
+      "product": "이지엔6프로",
+      "aliases": [
+        "이지엔6프로연질캡슐"
+      ],
+      "ingredients": [
+        "덱시부프로펜"
+      ],
+      "ingredient_tags": [
+        "analgesic",
+        "bleeding_risk",
+        "gi_risk"
+      ],
+      "class_hint": "NSAID",
+      "source": "식약처/더파머시(덱시부프로펜)"
+    },
+    {
+      "product": "이지엔6스트롱",
+      "aliases": [
+        "이지엔6스트롱연질캡슐"
+      ],
+      "ingredients": [
+        "나프록센"
+      ],
+      "ingredient_tags": [
+        "analgesic",
+        "bleeding_risk",
+        "gi_risk"
+      ],
+      "class_hint": "NSAID",
+      "source": "약사 확인(나프록센)"
+    },
+    {
+      "product": "이지엔6이브",
+      "aliases": [
+        "이지엔6이브연질캡슐"
+      ],
+      "ingredients": [
+        "이부프로펜",
+        "파마브롬"
+      ],
+      "ingredient_tags": [
+        "analgesic",
+        "bleeding_risk",
+        "gi_risk"
+      ],
+      "class_hint": "NSAID_COMBO",
+      "caution": "이뇨제(파마브롬) 포함. 생리 부종용.",
+      "source": "약사 확인(이부프로펜+파마브롬)"
+    },
+    {
+      "product": "부루펜",
+      "aliases": [
+        "부루펜정",
+        "부루펜시럽"
+      ],
+      "ingredients": [
+        "이부프로펜"
+      ],
+      "ingredient_tags": [
+        "analgesic",
+        "bleeding_risk",
+        "gi_risk"
+      ],
+      "class_hint": "NSAID",
+      "source": "식약처 의약품정보"
+    },
+    {
+      "product": "탁센",
+      "aliases": [
+        "탁센연질캡슐",
+        "탁센이브"
+      ],
+      "ingredients": [
+        "나프록센"
+      ],
+      "ingredient_tags": [
+        "analgesic",
+        "bleeding_risk",
+        "gi_risk"
+      ],
+      "class_hint": "NSAID",
+      "source": "식약처 의약품정보(나프록센)"
+    },
+    {
+      "product": "아스피린",
+      "aliases": [
+        "아스피린정",
+        "아스피린프로텍트"
+      ],
+      "ingredients": [
+        "아세틸살리실산"
+      ],
+      "ingredient_tags": [
+        "analgesic",
+        "bleeding_risk",
+        "gi_risk"
+      ],
+      "class_hint": "NSAID",
+      "caution": "항혈소판 작용 → 출혈 위험 특히 주의.",
+      "source": "식약처 의약품정보"
+    },
+    {
+      "product": "판피린큐",
+      "aliases": [
+        "판피린큐액",
+        "판피린"
+      ],
+      "ingredients": [
+        "아세트아미노펜",
+        "클로르페니라민",
+        "카페인무수물",
+        "구아이페네신 등 복합"
+      ],
+      "ingredient_tags": [
+        "analgesic",
+        "antipyretic",
+        "hepatotoxic",
+        "antihistamine",
+        "cns",
+        "contains_acetaminophen",
+        "acetaminophen"
+      ],
+      "class_hint": "COLD_COMBO",
+      "caution": "아세트아미노펜 함유 종합감기약 → 진통제 추가 시 중복.",
+      "source": "식약처 의약품통합정보(판피린큐액)"
+    },
+    {
+      "product": "판콜에이",
+      "aliases": [
+        "판콜에이내복액",
+        "판콜"
+      ],
+      "ingredients": [
+        "아세트아미노펜",
+        "클로르페니라민",
+        "구아이페네신",
+        "카페인 등 복합"
+      ],
+      "ingredient_tags": [
+        "analgesic",
+        "antipyretic",
+        "hepatotoxic",
+        "antihistamine",
+        "cns",
+        "contains_acetaminophen",
+        "acetaminophen"
+      ],
+      "class_hint": "COLD_COMBO",
+      "caution": "아세트아미노펜 함유 종합감기약 → 진통제 추가 시 중복.",
+      "source": "식약처 의약품정보(종합감기약)"
+    },
+    {
+      "product": "테라플루",
+      "aliases": [
+        "테라플루나이트타임"
+      ],
+      "ingredients": [
+        "아세트아미노펜",
+        "페닐레프린",
+        "클로르페니라민 등 복합"
+      ],
+      "ingredient_tags": [
+        "analgesic",
+        "antipyretic",
+        "hepatotoxic",
+        "antihistamine",
+        "cns",
+        "contains_acetaminophen",
+        "acetaminophen"
+      ],
+      "class_hint": "COLD_COMBO",
+      "caution": "아세트아미노펜 함유. 진통제 중복 주의.",
+      "source": "식약처 의약품정보"
+    },
+    {
+      "product": "은교산",
+      "aliases": [
+        "은교산연조엑스",
+        "은교산정"
+      ],
+      "ingredients": [
+        "생약복합(금은화, 연교 등)"
+      ],
+      "ingredient_tags": [],
+      "class_hint": "HERBAL_COLD",
+      "caution": "생약 감기약. 화학 진통성분과 계열이 달라 중복 위험은 낮으나, 다른 약과 병용 시 약사 확인 권장.",
+      "source": "식약처 생약제제 정보"
+    },
+    {
+      "product": "쌍화탕",
+      "aliases": [
+        "쌍화탕액",
+        "정품쌍화탕"
+      ],
+      "ingredients": [
+        "생약복합(백작약, 숙지황 등)"
+      ],
+      "ingredient_tags": [],
+      "class_hint": "HERBAL",
+      "caution": "생약 보약/감기 보조. 계열이 달라 화학약과 직접 중복은 적음.",
+      "source": "식약처 생약제제 정보"
+    },
+    {
+      "product": "훼스탈",
+      "aliases": [
+        "훼스탈플러스",
+        "훼스탈골드"
+      ],
+      "ingredients": [
+        "소화효소복합(판크레아틴 등)"
+      ],
+      "ingredient_tags": [
+        "gi"
+      ],
+      "class_hint": "DIGESTIVE_ENZYME",
+      "source": "식약처 의약품정보(소화효소제)"
+    },
+    {
+      "product": "베아제",
+      "aliases": [
+        "베아제정",
+        "닥터베아제"
+      ],
+      "ingredients": [
+        "소화효소복합"
+      ],
+      "ingredient_tags": [
+        "gi"
+      ],
+      "class_hint": "DIGESTIVE_ENZYME",
+      "source": "식약처 의약품정보(소화효소제)"
+    },
+    {
+      "product": "겔포스",
+      "aliases": [
+        "겔포스엠",
+        "겔포스현탁액"
+      ],
+      "ingredients": [
+        "제산제복합(수산화알루미늄 등)"
+      ],
+      "ingredient_tags": [
+        "gi",
+        "absorption_interference"
+      ],
+      "class_hint": "ANTACID",
+      "caution": "다른 약 흡수 방해 가능 → 복용 간격 두기.",
+      "source": "식약처 의약품정보(제산제)"
+    },
+    {
+      "product": "노바스크",
+      "aliases": [
+        "노바스크정"
+      ],
+      "ingredients": [
+        "암로디핀"
+      ],
+      "ingredient_tags": [
+        "bp_lowering"
+      ],
+      "class_hint": "ANTIHYPERTENSIVE_CCB",
+      "caution": "자몽 주의(CYP3A4). 임부·수유부 신중.",
+      "source": "식약처 의약품정보(암로디핀베실산염)"
+    },
+    {
+      "product": "아모디핀",
+      "aliases": [
+        "아모디핀정"
+      ],
+      "ingredients": [
+        "암로디핀"
+      ],
+      "ingredient_tags": [
+        "bp_lowering"
+      ],
+      "class_hint": "ANTIHYPERTENSIVE_CCB",
+      "source": "위키백과/식약처(암로디핀)"
+    },
+    {
+      "product": "레보텐션",
+      "aliases": [
+        "레보텐션정"
+      ],
+      "ingredients": [
+        "S-암로디핀"
+      ],
+      "ingredient_tags": [
+        "bp_lowering"
+      ],
+      "class_hint": "ANTIHYPERTENSIVE_CCB",
+      "source": "헬스오/식약처(S-암로디핀)"
+    },
+    {
+      "product": "디오반",
+      "aliases": [
+        "디오반정",
+        "디오반필름코팅정"
+      ],
+      "ingredients": [
+        "발사르탄"
+      ],
+      "ingredient_tags": [
+        "bp_lowering",
+        "potassium"
+      ],
+      "class_hint": "ANTIHYPERTENSIVE_ARB",
+      "caution": "칼륨보충제·고칼륨식 주의. 임부금기.",
+      "source": "식약처 의약품정보(발사르탄)"
+    },
+    {
+      "product": "코자",
+      "aliases": [
+        "코자정"
+      ],
+      "ingredients": [
+        "로사르탄"
+      ],
+      "ingredient_tags": [
+        "bp_lowering",
+        "potassium"
+      ],
+      "class_hint": "ANTIHYPERTENSIVE_ARB",
+      "caution": "칼륨 주의. 임부금기.",
+      "source": "식약처 의약품정보(로사르탄)"
+    },
+    {
+      "product": "다이아벡스",
+      "aliases": [
+        "다이아벡스정",
+        "다이아벡스엑스알서방정"
+      ],
+      "ingredients": [
+        "메트포르민"
+      ],
+      "ingredient_tags": [
+        "glucose_lowering",
+        "gi"
+      ],
+      "class_hint": "ANTIDIABETIC_METFORMIN",
+      "caution": "조영제 검사 전 중단 필요(신장). 위장장애.",
+      "source": "약학정보원/식약처(메트포르민염산염)"
+    },
+    {
+      "product": "아마릴",
+      "aliases": [
+        "아마릴정"
+      ],
+      "ingredients": [
+        "글리메피리드"
+      ],
+      "ingredient_tags": [
+        "glucose_lowering"
+      ],
+      "class_hint": "ANTIDIABETIC_SU",
+      "caution": "저혈당 주의(설포닐우레아). 음주 주의.",
+      "source": "의협신문/식약처(글리메피리드)"
+    },
+    {
+      "product": "자누비아",
+      "aliases": [
+        "자누비아정"
+      ],
+      "ingredients": [
+        "시타글립틴"
+      ],
+      "ingredient_tags": [
+        "glucose_lowering"
+      ],
+      "class_hint": "ANTIDIABETIC_DPP4",
+      "source": "메디칼타임즈/식약처(시타글립틴)"
+    },
+    {
+      "product": "리피토",
+      "aliases": [
+        "리피토정"
+      ],
+      "ingredients": [
+        "아토르바스타틴"
+      ],
+      "ingredient_tags": [
+        "muscle_risk"
+      ],
+      "class_hint": "STATIN",
+      "caution": "자몽 주의. 근육통 시 상담.",
+      "source": "식약처 의약품정보(아토르바스타틴)"
+    },
+    {
+      "product": "크레스토",
+      "aliases": [
+        "크레스토정"
+      ],
+      "ingredients": [
+        "로수바스타틴"
+      ],
+      "ingredient_tags": [
+        "muscle_risk"
+      ],
+      "class_hint": "STATIN",
+      "caution": "근육통 시 상담.",
+      "source": "식약처 의약품정보(로수바스타틴)"
+    },
+    {
+      "product": "리바로",
+      "aliases": [
+        "리바로정"
+      ],
+      "ingredients": [
+        "피타바스타틴"
+      ],
+      "ingredient_tags": [
+        "muscle_risk"
+      ],
+      "class_hint": "STATIN",
+      "source": "식약처 의약품정보(피타바스타틴)"
+    },
+    {
+      "product": "넥시움",
+      "aliases": [
+        "넥시움정"
+      ],
+      "ingredients": [
+        "에스오메프라졸"
+      ],
+      "ingredient_tags": [
+        "gi",
+        "absorption_interference"
+      ],
+      "class_hint": "PPI",
+      "caution": "장기복용 시 칼슘·B12 흡수저하. 일부 약 대사 영향.",
+      "source": "식약처 의약품정보(에스오메프라졸)"
+    },
+    {
+      "product": "란스톤",
+      "aliases": [
+        "란스톤엘에프디티정"
+      ],
+      "ingredients": [
+        "란소프라졸"
+      ],
+      "ingredient_tags": [
+        "gi",
+        "absorption_interference"
+      ],
+      "class_hint": "PPI",
+      "source": "식약처 의약품정보(란소프라졸)"
+    },
+    {
+      "product": "가스터",
+      "aliases": [
+        "가스터정"
+      ],
+      "ingredients": [
+        "파모티딘"
+      ],
+      "ingredient_tags": [
+        "gi"
+      ],
+      "class_hint": "H2_BLOCKER",
+      "source": "식약처 의약품정보(파모티딘)"
+    },
+    {
+      "product": "겔포스엠",
+      "aliases": [
+        "겔포스엠현탁액"
+      ],
+      "ingredients": [
+        "제산제복합"
+      ],
+      "ingredient_tags": [
+        "gi",
+        "absorption_interference"
+      ],
+      "class_hint": "ANTACID",
+      "caution": "다른 약 흡수 방해 → 간격 두기.",
+      "source": "식약처 의약품정보(제산제)"
+    },
+    {
+      "product": "오구멘틴",
+      "aliases": [
+        "오구멘틴정",
+        "오구멘틴시럽"
+      ],
+      "ingredients": [
+        "아목시실린",
+        "클라불란산"
+      ],
+      "ingredient_tags": [],
+      "class_hint": "ANTIBIOTIC_PENICILLIN",
+      "caution": "페니실린 알레르기 주의.",
+      "source": "식약처 의약품정보(아목시실린/클라불란산)"
+    },
+    {
+      "product": "크라비트",
+      "aliases": [
+        "크라비트정"
+      ],
+      "ingredients": [
+        "레보플록사신"
+      ],
+      "ingredient_tags": [],
+      "class_hint": "ANTIBIOTIC_QUINOLONE",
+      "caution": "유제품·칼슘과 간격. 힘줄염 주의.",
+      "source": "식약처 의약품정보(레보플록사신)"
+    },
+    {
+      "product": "지르텍",
+      "aliases": [
+        "지르텍정"
+      ],
+      "ingredients": [
+        "세티리진"
+      ],
+      "ingredient_tags": [
+        "antihistamine",
+        "cns"
+      ],
+      "class_hint": "ANTIHISTAMINE_2ND",
+      "caution": "술·중추억제제와 병용 시 졸음.",
+      "source": "식약처 의약품정보(세티리진)"
+    },
+    {
+      "product": "알레그라",
+      "aliases": [
+        "알레그라정"
+      ],
+      "ingredients": [
+        "펙소페나딘"
+      ],
+      "ingredient_tags": [
+        "antihistamine"
+      ],
+      "class_hint": "ANTIHISTAMINE_2ND",
+      "source": "식약처 의약품정보(펙소페나딘)"
+    },
+    {
+      "product": "씬지로이드",
+      "aliases": [
+        "씬지로이드정"
+      ],
+      "ingredients": [
+        "레보티록신"
+      ],
+      "ingredient_tags": [
+        "absorption_sensitive"
+      ],
+      "class_hint": "THYROID",
+      "caution": "아침 공복. 칼슘·철분·커피와 간격.",
+      "source": "식약처 의약품정보(레보티록신)"
+    }
+  ]
+}

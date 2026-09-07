@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>필체크 음성 비서</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+  <style>
+    :root { --teal:#0f6e56; --teal-deep:#085041; --teal-soft:#e1f5ee; --cream:#f7f4ec; --ink:#12312e; --amber:#ba7517; --coral:#d85a30; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:"Pretendard",system-ui,sans-serif; background:var(--cream); color:var(--ink); }
+    .wrap { max-width:560px; margin:0 auto; padding:24px; min-height:100vh; display:flex; flex-direction:column; }
+    header { text-align:center; padding:16px 0; }
+    header h1 { margin:0; font-size:26px; color:var(--teal-deep); }
+    header p { margin:8px 0 0; font-size:17px; color:#777; }
+
+    .notice { font-size:15px; color:#666; background:#fff; border:1px solid var(--teal-soft); border-radius:12px; padding:14px 16px; margin:16px 0; line-height:1.6; }
+
+    .conversation { flex:1; display:flex; flex-direction:column; gap:14px; margin:10px 0; }
+    .bubble { padding:16px 20px; border-radius:18px; font-size:19px; line-height:1.65; white-space:pre-wrap; }
+    .you { align-self:flex-end; background:var(--teal); color:#fff; max-width:85%; }
+    .bot { align-self:flex-start; background:#fff; border:1px solid var(--teal-soft); max-width:92%; }
+    .bot.risk-높음 { border-left:6px solid var(--coral); }
+    .bot.risk-보통 { border-left:6px solid var(--amber); }
+    .bot.risk-낮음 { border-left:6px solid var(--teal); }
+
+    .mic-area { text-align:center; padding:20px 0 8px; }
+    .mic-btn { width:120px; height:120px; border-radius:50%; border:none; background:var(--teal); color:#fff; font-size:19px; cursor:pointer; box-shadow:0 6px 20px rgba(15,110,86,0.3); transition:transform .1s; }
+    .mic-btn:active { transform:scale(0.96); }
+    .mic-btn.listening { background:var(--coral); animation:pulse 1.2s infinite; }
+    @keyframes pulse { 0%,100%{box-shadow:0 6px 20px rgba(216,90,48,0.4);} 50%{box-shadow:0 6px 34px rgba(216,90,48,0.7);} }
+    .mic-label { margin-top:14px; font-size:18px; color:var(--ink); }
+
+    .controls { display:flex; gap:10px; justify-content:center; margin-top:16px; }
+    .ctrl { padding:12px 20px; border:2px solid var(--teal); background:#fff; color:var(--teal-deep); border-radius:24px; font-size:16px; cursor:pointer; }
+    .ctrl:hover { background:var(--teal-soft); }
+
+    .disclaimer { font-size:13px; color:#999; text-align:center; margin-top:20px; }
+    .error { color:var(--coral); font-size:15px; text-align:center; margin-top:12px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>필체크 음성 비서</h1>
+      <p>말로 물어보고, 음성으로 들으세요</p>
+    </header>
+
+    <div class="notice">
+      마이크 버튼을 누르고 말씀하세요.<br />
+      예: <b>"타이레놀이랑 게보린 같이 먹어도 돼?"</b><br />
+      · 참고용 안내이며, 위험이 확인되면 약국·병원에서 상담하세요.
+    </div>
+
+    <div class="conversation" id="conv"></div>
+
+    <div class="mic-area">
+      <button class="mic-btn" id="micBtn" onclick="toggleMic()">🎙️<br />누르고<br />말하기</button>
+      <div class="mic-label" id="micLabel">버튼을 누르면 시작해요</div>
+      <div class="error" id="error"></div>
+    </div>
+
+    <div class="controls">
+      <button class="ctrl" onclick="repeatLast()">🔊 다시 듣기</button>
+      <button class="ctrl" onclick="stopSpeaking()">⏹ 그만 듣기</button>
+    </div>
+
+    <p class="disclaimer">
+      진단·처방이 아닌 참고용 서비스입니다. 최종 판단은 의사·약사가 합니다.
+    </p>
+  </div>
+
+  <script>
+    // 챗봇 서버 주소 (10 챗봇과 같은 서버에서 서빙되면 빈 문자열)
+    const API_BASE = "";
+
+    const conv = document.getElementById("conv");
+    const micBtn = document.getElementById("micBtn");
+    const micLabel = document.getElementById("micLabel");
+
+    let lastBotText = "";
+    let recognizing = false;
+    let recognition = null;
+
+    // ── 음성 인식(STT) 준비 ──
+    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SR) {
+      recognition = new SR();
+      recognition.lang = "ko-KR";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.onresult = (e) => {
+        const text = e.results[0][0].transcript;
+        addBubble(text, "you");
+        askServer(text);
+      };
+      recognition.onerror = (e) => {
+        showError("잘 못 들었어요. 다시 눌러서 말씀해 주세요.");
+        stopListening();
+      };
+      recognition.onend = () => stopListening();
+    } else {
+      showError("이 브라우저는 음성 인식을 지원하지 않아요. 크롬을 써주세요.");
+      micBtn.disabled = true;
+    }
+
+    function toggleMic() {
+      if (!recognition) return;
+      if (recognizing) {
+        recognition.stop();
+      } else {
+        stopSpeaking();
+        clearError();
+        recognition.start();
+        recognizing = true;
+        micBtn.classList.add("listening");
+        micLabel.textContent = "듣고 있어요… 말씀하세요";
+      }
+    }
+
+    function stopListening() {
+      recognizing = false;
+      micBtn.classList.remove("listening");
+      micLabel.textContent = "버튼을 누르면 시작해요";
+    }
+
+    // ── 챗봇 서버에 질문 ──
+    async function askServer(text) {
+      const loading = addBubble("확인 중이에요…", "bot");
+      try {
+        const res = await fetch(API_BASE + "/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ message: text }),
+        });
+        const data = await res.json();
+        loading.remove();
+
+        let spoken = "";
+        let risk = null;
+
+        if (data.type === "drug") {
+          risk = data.risk;
+          spoken = summarizeDrug(data);
+        } else if (data.type === "review") {
+          spoken = data.answer;
+        } else {
+          spoken = "죄송해요, 잘 이해하지 못했어요.";
+        }
+
+        addBubble(spoken, "bot", risk);
+        lastBotText = spoken;
+        speak(spoken);
+      } catch (err) {
+        loading.remove();
+        showError("서버에 연결하지 못했어요. 챗봇 서버가 켜져 있는지 확인해 주세요.");
+      }
+    }
+
+    // 약물 결과를 음성용으로 짧게 요약 (긴 리포트 전체를 읽지 않음)
+    function summarizeDrug(data) {
+      if (!data.risk) {
+        return data.report.split("\n")[0] || "약 이름을 알려주시면 확인해 드릴게요.";
+      }
+      let msg = `종합 위험도는 ${data.risk}입니다. `;
+      if (data.risk_reasons && data.risk_reasons.length) {
+        msg += data.risk_reasons[0] + " ";
+      }
+      if (data.risk === "높음" || data.risk === "보통") {
+        msg += "자세한 내용은 화면을 확인하시고, 가까운 약국이나 병원에서 상담하세요.";
+      } else {
+        msg += "다만 참고용이니, 걱정되시면 약사와 상담하세요.";
+      }
+      return msg;
+    }
+
+    // ── 음성 출력(TTS) ──
+    function speak(text) {
+      stopSpeaking();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang = "ko-KR";
+      u.rate = 0.95;   // 조금 천천히 (고령자 배려)
+      u.pitch = 1.0;
+      window.speechSynthesis.speak(u);
+    }
+
+    function stopSpeaking() {
+      window.speechSynthesis.cancel();
+    }
+
+    function repeatLast() {
+      if (lastBotText) speak(lastBotText);
+    }
+
+    // ── 화면 표시 ──
+    function addBubble(text, who, risk) {
+      const div = document.createElement("div");
+      div.className = "bubble " + who + (risk ? " risk-" + risk : "");
+      div.textContent = text;
+      conv.appendChild(div);
+      div.scrollIntoView({ behavior: "smooth" });
+      return div;
+    }
+
+    function showError(msg) { document.getElementById("error").textContent = msg; }
+    function clearError() { document.getElementById("error").textContent = ""; }
+  </script>
+</body>
+</html>

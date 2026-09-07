@@ -1,0 +1,444 @@
+[
+  {
+    "interaction_id": "DDI001",
+    "drug_a": "RX001",
+    "drug_b": "RX012",
+    "combo": "항응고제(와파린) + 소염진통제(NSAIDs)",
+    "severity": "HIGH",
+    "mechanism": "NSAIDs가 혈소판 기능을 억제하고 위점막을 손상시켜, 와파린의 항응고 작용과 겹치면 위장관 출혈 위험이 크게 증가.",
+    "service_message": "와파린과 소염진통제를 함께 드시면 출혈 위험이 높아져요. 진통이 필요하면 의사·약사와 상의하세요.",
+    "action": "AVOID",
+    "usage_note": "65세 이상에서 위장출혈 위험 특히 높음",
+    "evidence_status": "SOURCED",
+    "evidence_level": "MODERATE",
+    "evidence_level_ko": "중",
+    "source_ids": [
+      "PHARMINFO"
+    ],
+    "evidence_note": "와파린+NSAIDs 위장출혈 위험: 약학정보원 와파린 정보, RE-LY 사후분석. 항혈전+위점막손상 기전 널리 인정.",
+    "verification": "VERIFIED_SOURCE"
+  },
+  {
+    "interaction_id": "DDI002",
+    "drug_a": "RX001",
+    "drug_b": "RX013",
+    "combo": "항응고제(와파린) + 해열진통제(아세트아미노펜)",
+    "severity": "MEDIUM",
+    "mechanism": "아세트아미노펜을 고용량·장기 복용 시 와파린의 항응고 효과가 증강되어 INR이 상승할 수 있음.",
+    "service_message": "와파린 드시는 분이 타이레놀을 자주·많이 드시면 약효가 강해질 수 있어 정기적인 INR 확인이 필요해요.",
+    "action": "CAUTION",
+    "usage_note": "단기·저용량은 비교적 안전, 장기 복용 시 모니터링",
+    "evidence_status": "SOURCED",
+    "evidence_level": "MODERATE",
+    "evidence_level_ko": "중",
+    "source_ids": [
+      "PHARMINFO"
+    ],
+    "evidence_note": "와파린+아세트아미노펜 고용량·장기 시 INR 상승: 약학정보원 복약정보.",
+    "verification": "VERIFIED_SOURCE"
+  },
+  {
+    "interaction_id": "DDI003",
+    "drug_a": "RX003",
+    "drug_b": "RX012",
+    "combo": "혈압약(이뇨제·ARB) + 소염진통제(NSAIDs)",
+    "severity": "HIGH",
+    "mechanism": "NSAIDs가 신장 혈류를 감소시켜 이뇨제·ARB의 혈압강하 효과를 약화시키고, 신기능 저하·고칼륨혈증 위험(트리플 웨미 위험).",
+    "service_message": "혈압약과 소염진통제를 같이 드시면 혈압 조절이 어려워지고 신장에 부담이 될 수 있어요.",
+    "action": "CAUTION",
+    "usage_note": "이뇨제+ARB+NSAIDs 3제 병용은 급성신손상 위험(고령자 주의)",
+    "evidence_status": "SOURCED",
+    "evidence_level": "MODERATE",
+    "evidence_level_ko": "중",
+    "source_ids": [
+      "PMC_TRIPLEWHAMMY"
+    ],
+    "evidence_note": "NSAID+ACEI/ARB/이뇨제 병용 시 급성신부전·고칼륨혈증 위험, 특히 고령자·약 개수 많을수록 증가: NSAID+항고혈압제 신기능 모니터링 코호트 연구(PMC3313991, 2012) 확인.",
+    "verification": "VERIFIED_SOURCE"
+  },
+  {
+    "interaction_id": "DDI004",
+    "drug_a": "RX004",
+    "drug_b": "RX009",
+    "combo": "고지혈증약(스타틴) + 항생제(일부)",
+    "severity": "MEDIUM",
+    "mechanism": "일부 항생제가 스타틴 대사(CYP3A4)를 억제해 스타틴 혈중농도가 상승, 근육통·횡문근융해증 위험 증가.",
+    "service_message": "고지혈증약과 특정 항생제를 함께 드실 땐 근육통이 생기면 바로 알려주세요.",
+    "action": "CAUTION",
+    "usage_note": "근육 증상 발생 시 즉시 상담",
+    "evidence_status": "SOURCED",
+    "evidence_level": "MODERATE",
+    "evidence_level_ko": "중",
+    "source_ids": [
+      "PHARMINFO_STATIN",
+      "DAILYPHARM_CLARITHRO"
+    ],
+    "evidence_note": "스타틴+CYP3A4 억제 항생제(에리트로마이신·클래리트로마이신) 병용 시 아토르바스타틴 혈장농도 증가·근육독성: 약학정보원 아토르바스타틴 상호작용 원문 확인.",
+    "verification": "VERIFIED_SOURCE"
+  },
+  {
+    "interaction_id": "DDI005",
+    "drug_a": "RX008",
+    "drug_b": "RX012",
+    "combo": "당뇨약 + 소염진통제(NSAIDs)",
+    "severity": "MEDIUM",
+    "mechanism": "일부 NSAIDs가 설포닐우레아계 당뇨약의 혈당강하 효과를 증강시켜 저혈당 위험 증가.",
+    "service_message": "당뇨약과 소염진통제를 같이 드시면 혈당이 예상보다 떨어질 수 있어 저혈당 증상에 주의하세요.",
+    "action": "CAUTION",
+    "usage_note": "식은땀·어지럼 등 저혈당 증상 주의",
+    "evidence_status": "SOURCED",
+    "evidence_level": "LIMITED",
+    "evidence_level_ko": "약",
+    "source_ids": [
+      "PHARMINFO"
+    ],
+    "evidence_note": "[기전 추론·원문 미확인] 설포닐우레아+NSAIDs 저혈당 증강: 일반 주의.",
+    "verification": "MECHANISM_INFERRED"
+  },
+  {
+    "interaction_id": "DDI006",
+    "drug_a": "RX007",
+    "drug_b": "RX016",
+    "combo": "갑상선약(레보티록신) + 제산제/칼슘",
+    "severity": "MEDIUM",
+    "mechanism": "제산제·칼슘·철분이 레보티록신과 결합해 흡수를 크게 저하시킴. 복용 간격이 없으면 갑상선약 효과 감소.",
+    "service_message": "갑상선약과 제산제(칼슘)는 최소 4시간 간격을 두고 드셔야 약효가 유지돼요.",
+    "action": "SEPARATE_TIMING",
+    "usage_note": "복용 시간 분리로 해결 가능",
+    "evidence_status": "SOURCED",
+    "evidence_level": "MODERATE",
+    "evidence_level_ko": "중",
+    "source_ids": [
+      "MFDS_NEDRUG"
+    ],
+    "evidence_note": "레보티록신+칼슘/제산제 흡수저하: 식약처 제품정보 복약안내(간격 필요).",
+    "verification": "VERIFIED_SOURCE"
+  },
+  {
+    "interaction_id": "DDI007",
+    "drug_a": "RX010",
+    "drug_b": "RX016",
+    "combo": "골다공증약(비스포스포네이트) + 제산제/칼슘",
+    "severity": "MEDIUM",
+    "mechanism": "칼슘·제산제가 비스포스포네이트 흡수를 방해. 아침 공복 복용 후 최소 30분~2시간은 다른 약·음식 금지.",
+    "service_message": "골다공증약은 아침 공복에 드시고, 제산제·칼슘은 시간을 충분히 두고 드세요.",
+    "action": "SEPARATE_TIMING",
+    "usage_note": "복용 순서·간격이 핵심",
+    "evidence_status": "SOURCED",
+    "evidence_level": "MODERATE",
+    "evidence_level_ko": "중",
+    "source_ids": [
+      "MFDS_NEDRUG"
+    ],
+    "evidence_note": "비스포스포네이트+칼슘 흡수저하: 식약처 복약안내(공복 복용).",
+    "verification": "VERIFIED_SOURCE"
+  },
+  {
+    "interaction_id": "DDI008",
+    "drug_a": "RX011",
+    "drug_b": "RX015",
+    "combo": "천식약(테오필린) + 위장약(H2억제제/시메티딘)",
+    "severity": "HIGH",
+    "mechanism": "시메티딘이 테오필린 대사(CYP1A2)를 억제해 테오필린 혈중농도가 상승, 부정맥·경련 등 독성 위험.",
+    "service_message": "천식약(테오필린)과 이 위장약을 함께 드시면 천식약이 과하게 쌓일 수 있어 주의가 필요해요.",
+    "action": "AVOID",
+    "usage_note": "다른 계열 위장약으로 대체 고려(의사 상담)",
+    "evidence_status": "SOURCED",
+    "evidence_level": "MODERATE",
+    "evidence_level_ko": "중",
+    "source_ids": [
+      "PHARMINFO"
+    ],
+    "evidence_note": "[기전 추론·원문 미확인] 테오필린+시메티딘 CYP1A2 억제로 테오필린 상승: 약학정보원.",
+    "verification": "MECHANISM_INFERRED"
+  },
+  {
+    "interaction_id": "DDI009",
+    "drug_a": "RX012",
+    "drug_b": "RX013",
+    "combo": "소염진통제(NSAIDs) + 해열진통제(아세트아미노펜)",
+    "severity": "LOW",
+    "mechanism": "작용 기전이 달라 병용 자체는 가능하나, 중복 복용 시 총 진통제 용량 과다·신장/간 부담 가능.",
+    "service_message": "두 진통제는 함께 쓸 수 있지만, 정해진 용량을 넘지 않도록 주의하세요.",
+    "action": "CAUTION",
+    "usage_note": "용량 초과만 아니면 병용 가능",
+    "evidence_status": "SOURCED",
+    "evidence_level": "LIMITED",
+    "evidence_level_ko": "약",
+    "source_ids": [
+      "PHARMINFO"
+    ],
+    "evidence_note": "[기전 추론·원문 미확인] NSAIDs+아세트아미노펜 병용 가능하나 용량 초과 주의: 일반 복약지침.",
+    "verification": "MECHANISM_INFERRED"
+  },
+  {
+    "interaction_id": "DDI010",
+    "drug_a": "RX014",
+    "drug_b": "RX012",
+    "combo": "감기약(항히스타민) + 소염진통제(NSAIDs)",
+    "severity": "MEDIUM",
+    "mechanism": "종합감기약에 이미 진통·해열 성분(아세트아미노펜/이부프로펜)이 포함된 경우가 많아, 별도 진통제와 겹치면 성분 중복.",
+    "service_message": "종합감기약에 진통 성분이 들어있을 수 있어, 소염진통제를 추가로 드시면 성분이 겹칠 수 있어요.",
+    "action": "CAUTION",
+    "usage_note": "성분표 확인 필요(중복 복용 방지)",
+    "evidence_status": "SOURCED",
+    "evidence_level": "LIMITED",
+    "evidence_level_ko": "약",
+    "source_ids": [
+      "PHARMINFO"
+    ],
+    "evidence_note": "[기전 추론·원문 미확인] 종합감기약+진통제 성분중복 주의: 성분표 확인 권고.",
+    "verification": "MECHANISM_INFERRED"
+  },
+  {
+    "interaction_id": "DDI011",
+    "drug_a": "RX005",
+    "drug_b": "RX006",
+    "combo": "항우울제(MAO억제제) + 파킨슨약(레보도파)",
+    "severity": "HIGH",
+    "mechanism": "MAO억제제가 레보도파에서 생성된 도파민·노르에피네프린 분해를 막아 고혈압 위기(급격한 혈압상승) 위험.",
+    "service_message": "이 두 약을 함께 드시면 혈압이 급격히 오를 수 있어 반드시 의사와 상의가 필요해요.",
+    "action": "AVOID",
+    "usage_note": "병용 금기에 가까움. 반드시 전문의 확인",
+    "evidence_status": "SOURCED",
+    "evidence_level": "STRONG",
+    "evidence_level_ko": "강",
+    "source_ids": [
+      "MFDS_DUR_API",
+      "PHARMINFO"
+    ],
+    "evidence_note": "MAO억제제+레보도파: 식약처 제품정보상 고도 기립저혈압/고혈압위기 위험으로 병용 회피. 약학정보원 확인.",
+    "verification": "VERIFIED_SOURCE"
+  },
+  {
+    "interaction_id": "DDI012",
+    "drug_a": "RX001",
+    "drug_b": "RX004",
+    "combo": "항응고제(와파린) + 고지혈증약(스타틴)",
+    "severity": "MEDIUM",
+    "mechanism": "일부 스타틴이 와파린 대사에 영향을 주어 INR을 변동시킬 수 있음. 병용 시작·용량 변경 시 모니터링 필요.",
+    "service_message": "와파린과 고지혈증약을 함께 시작하실 땐 INR 변화를 확인하는 게 좋아요.",
+    "action": "CAUTION",
+    "usage_note": "병용 자체는 흔함, 시작 시 모니터링",
+    "evidence_status": "SOURCED",
+    "evidence_level": "MODERATE",
+    "evidence_level_ko": "중",
+    "source_ids": [
+      "PHARMINFO",
+      "DAILYPHARM_CLARITHRO"
+    ],
+    "evidence_note": "와파린+스타틴/CYP3A4 억제제 병용 시 와파린 농도 증가·INR 변동, 치료 시작·종료 시 용량 조절 필요: 약학정보원 와파린 정보 확인.",
+    "verification": "VERIFIED_SOURCE"
+  },
+  {
+    "interaction_id": "DDI013",
+    "drug_a": "RX019",
+    "drug_b": "RX020",
+    "combo": "항우울제(SSRI) + 항불안제(벤조디아제핀)",
+    "severity": "MEDIUM",
+    "mechanism": "둘 다 중추신경에 작용해 과진정·인지저하 가능. 병용 자체는 흔하나 용량·음주 시 주의.",
+    "service_message": "우울약과 신경안정제를 함께 드실 땐 졸림·집중저하가 올 수 있어 운전·기계조작에 주의하세요.",
+    "action": "CAUTION",
+    "usage_note": "직장인은 업무 중 졸림·판단력 저하 주의",
+    "evidence_status": "SOURCED",
+    "evidence_level": "MODERATE",
+    "evidence_level_ko": "중",
+    "source_ids": [
+      "PHARMINFO_BENZO"
+    ],
+    "evidence_note": "SSRI+벤조디아제핀 등 중추작용 약물 병용 시 진정·인지저하: 약학정보원 알프라졸람 정보(중추억제제 병용 시 진정·호흡억제 경고) 확인.",
+    "verification": "VERIFIED_SOURCE"
+  },
+  {
+    "interaction_id": "DDI014",
+    "drug_a": "RX019",
+    "drug_b": "RX023",
+    "combo": "항우울제(SSRI) + 편두통약(트립탄)",
+    "severity": "HIGH",
+    "mechanism": "둘 다 세로토닌을 높여, 병용 시 세로토닌증후군(고열·떨림·혼란) 위험.",
+    "service_message": "우울약과 편두통약(트립탄)을 함께 쓰면 드물게 위험한 반응이 생길 수 있어 반드시 의사와 상의하세요.",
+    "action": "AVOID",
+    "usage_note": "증상(떨림·심박↑·혼란) 시 즉시 병원",
+    "evidence_status": "SOURCED",
+    "evidence_level": "STRONG",
+    "evidence_level_ko": "강",
+    "source_ids": [
+      "PHARMINFO",
+      "MFDS_NEDRUG"
+    ],
+    "evidence_note": "SSRI+트립탄 세로토닌증후군: 약학정보원·식약처 제품정보에 세로토닌 작동성 약물 병용 경고 명시.",
+    "verification": "VERIFIED_SOURCE"
+  },
+  {
+    "interaction_id": "DDI015",
+    "drug_a": "RX020",
+    "drug_b": "RX021",
+    "combo": "항불안제(벤조디아제핀) + 수면제(Z드럭)",
+    "severity": "HIGH",
+    "mechanism": "중추억제 작용이 겹쳐 호흡억제·과진정·다음날 잔류 졸음 위험.",
+    "service_message": "신경안정제와 수면제를 같이 드시면 지나치게 처지거나 호흡이 약해질 수 있어 함께 복용은 피하세요.",
+    "action": "AVOID",
+    "usage_note": "음주까지 더해지면 매우 위험",
+    "evidence_status": "SOURCED",
+    "evidence_level": "MODERATE",
+    "evidence_level_ko": "중",
+    "source_ids": [
+      "PHARMINFO_BENZO",
+      "PHARMINFO_INSOMNIA"
+    ],
+    "evidence_note": "벤조디아제핀+Z드럭 중추억제 중첩 시 과진정·호흡억제: 약학정보원/식약처 벤조디아제핀 병용 위험 경고 확인.",
+    "verification": "VERIFIED_SOURCE"
+  },
+  {
+    "interaction_id": "DDI016",
+    "drug_a": "RX021",
+    "drug_b": "RX024",
+    "combo": "수면제(Z드럭) + 카페인",
+    "severity": "MEDIUM",
+    "mechanism": "카페인이 수면제 효과를 방해하고 수면의 질을 떨어뜨림. 상반된 작용.",
+    "service_message": "수면제 드시는 날 저녁 카페인(커피·에너지드링크)은 약효를 떨어뜨려요.",
+    "action": "CAUTION",
+    "usage_note": "오후 카페인 자체가 불면 악화",
+    "evidence_status": "SOURCED",
+    "evidence_level": "LIMITED",
+    "evidence_level_ko": "약",
+    "source_ids": [
+      "PHARMINFO"
+    ],
+    "evidence_note": "[기전 추론·원문 미확인] 수면제+카페인 상반작용: 일반 수면위생 지침.",
+    "verification": "MECHANISM_INFERRED"
+  },
+  {
+    "interaction_id": "DDI017",
+    "drug_a": "RX024",
+    "drug_b": "RX011",
+    "combo": "카페인 + 천식약(테오필린)",
+    "severity": "HIGH",
+    "mechanism": "테오필린과 카페인은 화학적으로 유사해 중추·심장 자극이 겹침. 부정맥·불안·떨림 위험.",
+    "service_message": "천식약(테오필린) 드시는 분이 고카페인 음료를 많이 드시면 두근거림·불안이 심해질 수 있어요.",
+    "action": "AVOID",
+    "usage_note": "에너지드링크 특히 주의",
+    "evidence_status": "SOURCED",
+    "evidence_level": "MODERATE",
+    "evidence_level_ko": "중",
+    "source_ids": [
+      "PHARMINFO"
+    ],
+    "evidence_note": "[기전 추론·원문 미확인] 테오필린+카페인 중추·심장 자극 중첩: 약학정보원(카페인 중복 주의).",
+    "verification": "MECHANISM_INFERRED"
+  },
+  {
+    "interaction_id": "DDI018",
+    "drug_a": "RX024",
+    "drug_b": "RX020",
+    "combo": "카페인 + 항불안제(벤조디아제핀)",
+    "severity": "MEDIUM",
+    "mechanism": "카페인(각성)이 항불안제(진정)와 반대로 작용해 약효를 상쇄하고 불안을 되레 키울 수 있음.",
+    "service_message": "신경안정제 드시는 동안 카페인을 많이 드시면 약효가 떨어지고 불안이 심해질 수 있어요.",
+    "action": "CAUTION",
+    "usage_note": "에너지드링크·고카페인 커피 줄이기",
+    "evidence_status": "SOURCED",
+    "evidence_level": "LIMITED",
+    "evidence_level_ko": "약",
+    "source_ids": [
+      "PHARMINFO"
+    ],
+    "evidence_note": "[기전 추론·원문 미확인] 카페인+항불안제 상반작용: 일반 주의.",
+    "verification": "MECHANISM_INFERRED"
+  },
+  {
+    "interaction_id": "DDI019",
+    "drug_a": "RX022",
+    "drug_b": "RX009",
+    "combo": "경구피임약 + 항생제(일부)",
+    "severity": "MEDIUM",
+    "mechanism": "일부 항생제(특히 리팜핀 계열)가 피임약 대사를 촉진해 피임 효과를 떨어뜨릴 수 있음. 일반 항생제는 영향 적음.",
+    "service_message": "피임약과 특정 항생제를 함께 쓰는 동안은 추가 피임을 권해요. 처방 시 약사에게 확인하세요.",
+    "action": "CAUTION",
+    "usage_note": "직장인 피임 신뢰도 이슈",
+    "evidence_status": "SOURCED",
+    "evidence_level": "MODERATE",
+    "evidence_level_ko": "중",
+    "source_ids": [
+      "PHARMINFO"
+    ],
+    "evidence_note": "[기전 추론·원문 미확인] 경구피임약+리팜핀계 항생제 효과저하: 약학정보원(일반항생제는 영향 적음).",
+    "verification": "MECHANISM_INFERRED"
+  },
+  {
+    "interaction_id": "DDI020",
+    "drug_a": "RX022",
+    "drug_b": "RX012",
+    "combo": "경구피임약 + 소염진통제(NSAIDs) [흡연 동반 시]",
+    "severity": "MEDIUM",
+    "mechanism": "피임약 자체가 혈전 위험을 높이며, 흡연·장시간 착석 등이 겹치면 정맥혈전 위험 상승. NSAIDs 장기 병용 시 혈압·신장 부담.",
+    "service_message": "피임약 드시는 분은 흡연·장시간 앉은 자세와 겹칠 때 혈전 위험이 올라가니 생활습관도 함께 살펴보세요.",
+    "action": "CAUTION",
+    "usage_note": "직장인 장시간 착석+흡연 조합 주의",
+    "evidence_status": "SOURCED",
+    "evidence_level": "LIMITED",
+    "evidence_level_ko": "약",
+    "source_ids": [
+      "PHARMINFO"
+    ],
+    "evidence_note": "[기전 추론·원문 미확인] 피임약 혈전위험+흡연/좌식 생활요인: 일반 주의.",
+    "verification": "MECHANISM_INFERRED"
+  },
+  {
+    "interaction_id": "DDI021",
+    "drug_a": "RX017",
+    "drug_b": "RX004",
+    "combo": "제산제-PPI + 고지혈증약(스타틴) 등 [흡수 영향]",
+    "severity": "LOW",
+    "mechanism": "PPI가 위산을 낮춰 일부 약물 흡수에 영향을 줄 수 있으나 스타틴 자체는 대체로 안전. 다만 장기 PPI는 칼슘·마그네슘·B12 흡수 저하.",
+    "service_message": "위산억제제를 오래 드시면 칼슘·비타민 흡수가 떨어질 수 있어, 장기 복용 시 점검이 필요해요.",
+    "action": "CAUTION",
+    "usage_note": "장기 PPI 복용 시 영양소 흡수 점검",
+    "evidence_status": "SOURCED",
+    "evidence_level": "MODERATE",
+    "evidence_level_ko": "중",
+    "source_ids": [
+      "PHARMINFO_PPI"
+    ],
+    "evidence_note": "PPI 3개월↑ 저마그네슘혈증(1년↑ 최다), 골다공증성 골절 위험, 이뇨제 병용 시 마그네슘 모니터링 필요: 약학정보원 오메프라졸 원문 확인.",
+    "verification": "VERIFIED_SOURCE"
+  },
+  {
+    "interaction_id": "DDI022",
+    "drug_a": "RX019",
+    "drug_b": "RX001",
+    "combo": "항우울제(SSRI) + 항응고제(와파린)",
+    "severity": "HIGH",
+    "mechanism": "SSRI가 혈소판 기능을 떨어뜨려 와파린과 겹치면 출혈 위험 증가.",
+    "service_message": "우울약(SSRI)과 와파린을 함께 드시면 멍·출혈이 잘 생길 수 있어 주의가 필요해요.",
+    "action": "CAUTION",
+    "usage_note": "출혈 징후(잇몸·멍) 관찰",
+    "evidence_status": "SOURCED",
+    "evidence_level": "MODERATE",
+    "evidence_level_ko": "중",
+    "source_ids": [
+      "PHARMINFO"
+    ],
+    "evidence_note": "[기전 추론·원문 미확인] SSRI+와파린 출혈위험(혈소판 기능저하): 약학정보원.",
+    "verification": "MECHANISM_INFERRED"
+  },
+  {
+    "interaction_id": "DDI023",
+    "drug_a": "RX019",
+    "drug_b": "RX012",
+    "combo": "항우울제(SSRI) + 소염진통제(NSAIDs)",
+    "severity": "MEDIUM",
+    "mechanism": "SSRI+NSAIDs 병용 시 위장관 출혈 위험이 상승(둘 다 위점막·혈소판에 작용).",
+    "service_message": "우울약(SSRI) 드시는 동안 소염진통제를 자주 드시면 속쓰림·출혈 위험이 커질 수 있어요.",
+    "action": "CAUTION",
+    "usage_note": "위장약 병용 고려(의사 상담)",
+    "evidence_status": "SOURCED",
+    "evidence_level": "MODERATE",
+    "evidence_level_ko": "중",
+    "source_ids": [
+      "PHARMINFO"
+    ],
+    "evidence_note": "[기전 추론·원문 미확인] SSRI+NSAIDs 위장출혈 위험 상승: 약학정보원.",
+    "verification": "MECHANISM_INFERRED"
+  }
+]

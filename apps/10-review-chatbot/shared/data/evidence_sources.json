@@ -1,0 +1,144 @@
+{
+  "_meta": {
+    "설명": "필체크가 인용하는 공식 근거원 정의. 각 상호작용·규칙은 여기의 source_id로 출처를 연결한다.",
+    "근거수준_기준": {
+      "STRONG": "식약처 DUR 공식 병용금기/금기에 등재 — 기계적으로 확인 가능한 공식 근거",
+      "MODERATE": "진료지침·교과서·약학정보원 등 널리 인정된 기전/가이드라인",
+      "LIMITED": "일반적 주의사항·경향 수준 — 참고용, 개인차 큼"
+    }
+  },
+  "sources": {
+    "MFDS_DUR_API": {
+      "name": "식품의약품안전처 의약품안전사용서비스(DUR) 품목정보 OpenAPI",
+      "url": "https://www.data.go.kr/data/15059486/openapi.do",
+      "provides": [
+        "병용금기",
+        "노인주의",
+        "특정연령대금기",
+        "임부금기",
+        "용량주의",
+        "효능군중복주의"
+      ],
+      "note": "요청주소 apis.data.go.kr/1471000/DURPrdlstInfoService03/. 무료·자동승인.",
+      "last_checked": "2026-08"
+    },
+    "KIDS_DUR_FILE": {
+      "name": "한국의약품안전관리원 병용금기약물 (파일데이터)",
+      "url": "https://www.data.go.kr/data/15089525/fileData.do",
+      "provides": [
+        "병용금기 목록"
+      ],
+      "note": "DUR 병용금기 성분 조합 목록. 오프라인 대조용.",
+      "last_checked": "2026-08"
+    },
+    "HIRA_DUR": {
+      "name": "건강보험심사평가원 DUR 의약품 목록",
+      "url": "https://www.data.go.kr/data/15127983/fileData.do",
+      "provides": [
+        "병용금기",
+        "연령금기",
+        "임부금기",
+        "노인주의"
+      ],
+      "note": "요양기관 실시간 점검에 쓰이는 목록.",
+      "last_checked": "2026-08"
+    },
+    "PHARMINFO": {
+      "name": "약학정보원(health.kr)",
+      "url": "https://www.health.kr/",
+      "provides": [
+        "성분정보",
+        "약물 상호작용",
+        "복약정보"
+      ],
+      "note": "대한민국 의약품정보 표준. 상호작용·복약안내 참조.",
+      "last_checked": "2026-08"
+    },
+    "MFDS_NEDRUG": {
+      "name": "식약처 의약품안전나라(제품·DUR 검색)",
+      "url": "https://nedrug.mfds.go.kr/",
+      "provides": [
+        "제품 성분",
+        "DUR 성분 검색"
+      ],
+      "note": "제품→성분, DUR 성분 확인.",
+      "last_checked": "2026-08"
+    },
+    "BEERS_2023": {
+      "name": "미국노인의학회 Beers Criteria 2023 (AGS)",
+      "url": "https://doi.org/10.1111/jgs.18372",
+      "provides": [
+        "노인 부적절약물(PIM)",
+        "벤조디아제핀·NSAID 노인주의"
+      ],
+      "note": "65세 이상 잠재적 부적절 약물 목록. 벤조디아제핀·Z드럭·NSAID의 낙상·섬망·출혈 위험 명시.",
+      "year": "2023",
+      "last_checked": "2026-08"
+    },
+    "MFDS_TYLENOL": {
+      "name": "식약처 타이레놀정 허가사항 (아세트아미노펜)",
+      "url": "https://nedrug.mfds.go.kr/pbp/CCBBB01/getItemDetail?itemSeq=199303108",
+      "provides": [
+        "아세트아미노펜 일일최대용량",
+        "성분 중복 경고"
+      ],
+      "note": "일일 최대 4,000mg 초과 금지, 아세트아미노펜 함유 다른 제품과 병용 금지 명문.",
+      "year": "2026",
+      "last_checked": "2026-08"
+    },
+    "PHARMINFO_INSOMNIA": {
+      "name": "약학정보원 불면증 약물치료 자료",
+      "url": "https://www.health.kr/",
+      "provides": [
+        "벤조디아제핀·Z드럭 중추억제"
+      ],
+      "year": "2024",
+      "last_checked": "2026-08"
+    },
+    "PHARMINFO_STATIN": {
+      "name": "약학정보원 아토르바스타틴 상호작용 정보",
+      "url": "https://www.health.kr/",
+      "provides": [
+        "스타틴+CYP3A4 억제제"
+      ],
+      "year": "2026",
+      "last_checked": "2026-08"
+    },
+    "PHARMINFO_PPI": {
+      "name": "약학정보원 오메프라졸 정보(저마그네슘혈증·골절)",
+      "url": "https://www.health.kr/",
+      "provides": [
+        "PPI 장기복용 영양소·골절"
+      ],
+      "year": "2026",
+      "last_checked": "2026-08"
+    },
+    "PMC_TRIPLEWHAMMY": {
+      "name": "NSAID+ARB/이뇨제 신손상 코호트 연구(PMC3313991)",
+      "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3313991/",
+      "provides": [
+        "triple whammy 급성신부전·고칼륨"
+      ],
+      "year": "2012",
+      "last_checked": "2026-08"
+    },
+    "DAILYPHARM_CLARITHRO": {
+      "name": "데일리팜 클래리스로마이신 상호작용(와파린·스타틴·테오필린)",
+      "url": "https://m.dailypharm.com/News/202359",
+      "provides": [
+        "CYP3A4 억제 상호작용"
+      ],
+      "year": "2026",
+      "last_checked": "2026-08"
+    },
+    "PHARMINFO_BENZO": {
+      "name": "약학정보원/식약처 알프라졸람 정보(중추억제 병용 위험)",
+      "url": "https://www.health.kr/",
+      "provides": [
+        "벤조디아제핀 중추억제 병용"
+      ],
+      "year": "2026",
+      "last_checked": "2026-08"
+    }
+  }
+}

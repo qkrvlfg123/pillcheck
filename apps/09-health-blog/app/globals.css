@@ -1,0 +1,50 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+  /* 다크 (기본) */
+  --bg: #0e1a18;
+  --bg-elev: #142523;
+  --line: #23403b;
+  --text: #e8f0ee;
+  --text-dim: #8fa8a2;
+  --teal: #3fbfa0;
+  --teal-deep: #2a9d84;
+  --amber: #d9a441;
+}
+
+/* 라이트 모드 */
+:root[data-theme="light"] {
+  --bg: #f6f8f7;
+  --bg-elev: #ffffff;
+  --line: #dbe6e2;
+  --text: #12312e;
+  --text-dim: #5f7a73;
+  --teal: #0f6e56;
+  --teal-deep: #085041;
+  --amber: #ba7517;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.01em;
+  transition: background .2s ease, color .2s ease;
+}
+
+:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition-duration: 0.01ms !important; }
+}
+
+.prose { font-size: 1.075rem; line-height: 1.85; color: var(--text); }
+.prose p { margin: 0 0 1.2em; }
+
+a { color: inherit; }
