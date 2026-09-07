@@ -1,0 +1,41 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: #f7f4ec;
+  color: #12312e;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 접근성: 키보드 포커스 뚜렷하게 (고령자·저시력 배려) */
+:focus-visible {
+  outline: 3px solid #0f6e56;
+  outline-offset: 2px;
+}
+
+/* 모션 최소화 존중 */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* 은은한 등장 애니메이션 */
+@keyframes rise {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.rise { animation: rise 0.6s ease both; }
+.rise-2 { animation: rise 0.6s ease 0.1s both; }
+.rise-3 { animation: rise 0.6s ease 0.2s both; }
