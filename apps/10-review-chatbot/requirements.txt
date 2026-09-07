@@ -1,0 +1,7 @@
+# 필수 (약물 상담 - 키 불필요)
+fastapi>=0.110.0
+uvicorn[standard]>=0.27.0
+pydantic>=2.0.0
+
+# 선택 (RAG 쇼핑 리뷰 - 키 있을 때만 필요)
+# 아래는 RAG를 쓰려면 설치: pip install -r requirements-rag.txt

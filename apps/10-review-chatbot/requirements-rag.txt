@@ -1,0 +1,6 @@
+# RAG(쇼핑 리뷰 분석)용 추가 패키지 — 키 있을 때만
+langchain>=0.3.0
+langchain-google-genai>=2.0.0
+langchain-pinecone>=0.2.0
+pinecone>=5.0.0
+python-dotenv>=1.0.0

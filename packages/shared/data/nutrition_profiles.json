@@ -1,0 +1,241 @@
+{
+  "_meta": {
+    "설명": "직업군·생활패턴·나이대별로 '부족하기 쉬운' 영양소 정보. 추천이 아니라 참고 안내.",
+    "법적_원칙": [
+      "질병 치료·예방 효과를 표방하지 않는다(약사법·건강기능식품법).",
+      "특정 제품·브랜드를 판매 유도하지 않는다. 성분(영양소) 수준 정보만 제공.",
+      "'무조건 먹으라'가 아니라 '부족할 수 있으니 참고하고 전문가와 상담'으로 안내.",
+      "과잉 섭취도 위험할 수 있음을 함께 고지(예: 비타민D 과잉 → 낙상·골절 위험 보고)."
+    ],
+    "근거_주의": "영양 필요는 개인차가 크다. 결핍 여부는 혈액검사로 확인해야 하며, 이 데이터는 일반적 경향 안내일 뿐이다."
+  },
+  "nutrients": {
+    "vitamin_d": {
+      "name": "비타민 D",
+      "food": "등푸른생선, 달걀노른자, 햇빛 노출",
+      "caution": "과잉 시 고칼슘혈증. 고용량 보충은 오히려 낙상·골절 위험 보고가 있어 전문가 상담 필요."
+    },
+    "vitamin_b": {
+      "name": "비타민 B군",
+      "food": "통곡물, 육류, 달걀",
+      "caution": "수용성이라 과잉은 비교적 적으나 고용량 B6 장기복용은 신경증상 보고."
+    },
+    "vitamin_c": {
+      "name": "비타민 C",
+      "food": "채소·과일",
+      "caution": "과잉 시 위장장애·신결석 위험(고용량)."
+    },
+    "magnesium": {
+      "name": "마그네슘",
+      "food": "견과류, 통곡물, 녹색채소",
+      "caution": "과잉 시 설사. 신장질환자 주의."
+    },
+    "omega3": {
+      "name": "오메가3",
+      "food": "등푸른생선",
+      "caution": "항응고 작용 → 와파린 등 혈액 관련 약과 상호작용 주의."
+    },
+    "iron": {
+      "name": "철분",
+      "food": "붉은살코기, 콩류",
+      "caution": "과잉 시 위장장애·변비. 남성·폐경후 여성은 과잉 주의."
+    },
+    "calcium": {
+      "name": "칼슘",
+      "food": "유제품, 두부, 멸치",
+      "caution": "과잉 시 신결석. 특정 항생제·갑상선약 흡수 방해(복용 간격)."
+    },
+    "melatonin_hygiene": {
+      "name": "수면 위생(멜라토닌은 국내 전문약)",
+      "food": "규칙적 수면, 빛 관리",
+      "caution": "국내에서 멜라토닌은 전문의약품이라 임의복용 불가. 생활습관 개선 우선."
+    },
+    "lutein": {
+      "name": "루테인",
+      "food": "녹황색 채소",
+      "caution": "눈 건강 보조. 흡연자 고용량 베타카로틴 주의."
+    },
+    "probiotics": {
+      "name": "유산균(프로바이오틱스)",
+      "food": "발효식품",
+      "caution": "면역저하자는 전문가 상담."
+    },
+    "zinc": {
+      "name": "아연",
+      "food": "굴, 육류, 견과류",
+      "caution": "과잉 시 구리 결핍·면역저하. 일부 항생제 흡수 방해."
+    },
+    "folate": {
+      "name": "엽산",
+      "food": "녹색채소, 콩류",
+      "caution": "임신 준비·초기 중요. 과잉은 비타민B12 결핍 은폐 가능."
+    },
+    "vitamin_k": {
+      "name": "비타민 K",
+      "food": "녹색잎채소, 낫토",
+      "caution": "와파린(항응고제)의 작용을 방해 → 복용자는 섭취량 일정 유지 필요."
+    },
+    "coq10": {
+      "name": "코엔자임Q10",
+      "food": "육류, 등푸른생선",
+      "caution": "스타틴 복용 시 감소 가능. 혈압·항응고제와 상호작용 가능성."
+    },
+    "vitamin_e": {
+      "name": "비타민 E",
+      "food": "견과류, 식물성기름",
+      "caution": "고용량은 출혈 위험 증가(항응고제와 주의)."
+    },
+    "vitamin_a": {
+      "name": "비타민 A",
+      "food": "간, 녹황색채소",
+      "caution": "과잉은 특히 임부에게 위험(기형). 지용성이라 축적."
+    }
+  },
+  "by_work_pattern": [
+    {
+      "id": "sedentary_office",
+      "label": "오래 앉아있는 직장인",
+      "nutrients": [
+        "vitamin_d",
+        "magnesium",
+        "omega3"
+      ],
+      "reason": "실외활동·햇빛 노출이 적어 비타민D가 부족하기 쉽고, 장시간 좌식은 혈액순환·근육 긴장과 관련. 삼성서울병원 자료도 '바쁜 직장인'의 비타민D 부족을 지적.",
+      "source": "삼성서울병원 영양정보; 좌식생활 관련 영양 연구",
+      "source_year": "2017-2024",
+      "source_url": "http://www.samsunghospital.com / KCI 학술DB"
+    },
+    {
+      "id": "field_active",
+      "label": "많이 움직이는 현장직",
+      "nutrients": [
+        "vitamin_b",
+        "magnesium",
+        "vitamin_c"
+      ],
+      "reason": "에너지 대사가 활발해 비타민B군 요구가 늘고, 땀으로 마그네슘 등 전해질 손실. 신체 스트레스에 비타민C 관여.",
+      "source": "운동·노동 영양 일반 지침",
+      "source_year": "2017-2024",
+      "source_url": "http://www.samsunghospital.com / KCI 학술DB"
+    },
+    {
+      "id": "standing_service",
+      "label": "오래 서있는 서비스직",
+      "nutrients": [
+        "magnesium",
+        "vitamin_d",
+        "omega3"
+      ],
+      "reason": "장시간 기립은 하지 부담·부종과 관련. 실내근무 시 햇빛 부족으로 비타민D 저하 가능.",
+      "source": "기립근무 건강 일반 자료",
+      "source_year": "2017-2024",
+      "source_url": "http://www.samsunghospital.com / KCI 학술DB"
+    },
+    {
+      "id": "food_service",
+      "label": "음식점·서비스직",
+      "nutrients": [
+        "vitamin_d",
+        "vitamin_b",
+        "probiotics"
+      ],
+      "reason": "실내·장시간 근무로 햇빛 부족, 불규칙한 식사로 B군 섭취 편중 가능.",
+      "source": "교대·서비스직 식생활 연구",
+      "source_year": "2017-2024",
+      "source_url": "http://www.samsunghospital.com / KCI 학술DB"
+    },
+    {
+      "id": "shift_worker",
+      "label": "낮밤 바뀌는 교대근무자",
+      "nutrients": [
+        "vitamin_d",
+        "melatonin_hygiene",
+        "vitamin_b"
+      ],
+      "reason": "낮 시간 햇빛 노출이 적어 비타민D 부족이 잦고, 생체리듬 교란으로 수면 문제 흔함(멜라토닌은 국내 전문약이라 생활습관 개선 우선).",
+      "source": "교대근무자 비타민D·수면 연구",
+      "source_year": "2017-2024",
+      "source_url": "http://www.samsunghospital.com / KCI 학술DB"
+    },
+    {
+      "id": "long_hours",
+      "label": "하루 12~14시간 장시간 근무",
+      "nutrients": [
+        "vitamin_b",
+        "magnesium",
+        "vitamin_c",
+        "vitamin_d"
+      ],
+      "reason": "만성 피로·스트레스 상황에서 B군·마그네슘 요구 증가, 실외활동 부족으로 비타민D 저하 가능.",
+      "source": "장시간 근로 건강영향 일반 자료",
+      "source_year": "2017-2024",
+      "source_url": "http://www.samsunghospital.com / KCI 학술DB"
+    },
+    {
+      "id": "sleep_deprived",
+      "label": "평균 수면 6시간 미만",
+      "nutrients": [
+        "magnesium",
+        "vitamin_b",
+        "melatonin_hygiene"
+      ],
+      "reason": "수면 부족은 피로·집중저하와 관련. 마그네슘·B군이 신경·근육 기능에 관여(치료가 아니라 보조). 수면 위생 개선이 우선.",
+      "source": "수면·영양 일반 자료",
+      "source_year": "2017-2024",
+      "source_url": "http://www.samsunghospital.com / KCI 학술DB"
+    }
+  ],
+  "by_age": [
+    {
+      "age_band": "20s",
+      "label": "20대",
+      "nutrients": [
+        "vitamin_d",
+        "iron",
+        "omega3",
+        "folate"
+      ],
+      "reason": "불규칙한 식사·실내생활. 월경 여성은 철분 손실 고려.",
+      "source": "연령별 영양 일반 지침",
+      "source_year": "일반 지침"
+    },
+    {
+      "age_band": "30s",
+      "label": "30대",
+      "nutrients": [
+        "vitamin_d",
+        "vitamin_b",
+        "magnesium"
+      ],
+      "reason": "업무 스트레스·피로 누적기. 좌식·햇빛부족 지속.",
+      "source": "연령별 영양 일반 지침",
+      "source_year": "일반 지침"
+    },
+    {
+      "age_band": "40s",
+      "label": "40대",
+      "nutrients": [
+        "vitamin_d",
+        "omega3",
+        "lutein",
+        "calcium"
+      ],
+      "reason": "대사 변화·눈 피로·뼈 건강 관리 시작 시기.",
+      "source": "연령별 영양 일반 지침",
+      "source_year": "일반 지침"
+    },
+    {
+      "age_band": "50s",
+      "label": "50대",
+      "nutrients": [
+        "calcium",
+        "vitamin_d",
+        "omega3",
+        "lutein"
+      ],
+      "reason": "골밀도 감소·심혈관·눈 건강 관리 필요. 칼슘+비타민D는 뼈 건강 보조(단 과잉 주의).",
+      "source": "연령별 영양 일반 지침",
+      "source_year": "일반 지침"
+    }
+  ]
+}
