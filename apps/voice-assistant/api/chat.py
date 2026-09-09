@@ -35,6 +35,7 @@ from http.server import BaseHTTPRequestHandler
 import json
 import os
 import sys
+import traceback
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, os.path.join(HERE, "_bundle", "app"))
@@ -68,9 +69,12 @@ class handler(BaseHTTPRequestHandler):
 
             self._respond(200, body)
         except Exception:
+            # 스택트레이스는 Vercel 런타임 로그로 보낸다.
+            traceback.print_exc()
             self._respond(500, {
                 "type": "error",
                 "answer": "잠시 문제가 생겼어요. 다시 말씀해 주세요.",
+                "detail": traceback.format_exc()[-900:],  # TODO: 원인 확인 후 제거
             })
 
     def _respond(self, status, body):
