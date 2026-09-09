@@ -41,7 +41,7 @@ uvicorn app.main:app --reload
 
 ### Vercel 배포
 
-공개 배포본(https://voice-assistant.vercel.app)은 `/chat`을 **Vercel 서버리스 함수**
+공개 배포본(https://voice-assistant-nine-drab.vercel.app)은 `/chat`을 **Vercel 서버리스 함수**
 (`api/chat.py`)가 처리하므로 별도 챗봇 서버 없이 단독으로 동작합니다.
 `vercel.json`의 rewrite가 `/chat` → `/api/chat`을 연결해 주기 때문에 `index.html`은
 고치지 않았습니다(10 챗봇의 `static/voice.html`과 동일하게 유지).
