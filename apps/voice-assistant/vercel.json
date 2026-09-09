@@ -1,0 +1,10 @@
+{
+  "functions": {
+    "api/chat.py": {
+      "includeFiles": "api/_bundle/**"
+    }
+  },
+  "rewrites": [
+    { "source": "/chat", "destination": "/api/chat" }
+  ]
+}
