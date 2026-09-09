@@ -1,23 +1,37 @@
 import DrugDemo from "@/components/DrugDemo";
 
+// 배포된 각 앱 주소. 랜딩에서 여기로 이어진다.
+const APPS = {
+  chatbot: "https://pillcheck-21hy.onrender.com", // 10 · 약물 상담 챗봇
+  blog: "https://09-health-blog.vercel.app", // 09 · 건강 블로그
+  map: "https://11-pharmacy-map.vercel.app", // 11 · 약국·병원 지도
+  voice: "https://voice-assistant-nine-drab.vercel.app", // 음성 비서
+};
+
 const FEATURES = [
   {
     tag: "상호작용 확인",
     title: "이 약들, 같이 먹어도 될까요?",
     body: "여러 약을 함께 복용할 때 위험한 조합을 식약처 공식 데이터(DUR)로 확인해드려요. 병용금기부터 성분 중복까지.",
-    href: "#",
+    href: APPS.chatbot,
   },
   {
     tag: "약물 정보",
     title: "쉬운 말로 읽는 약 이야기",
     body: "함께 먹으면 안 되는 약, 겹치면 위험한 성분처럼 꼭 필요한 정보를 어려운 용어 없이 전해드려요.",
-    href: "#",
+    href: APPS.blog,
   },
   {
     tag: "약국·병원 찾기",
     title: "가까운 곳에서 상담하기",
     body: "주의가 필요한 조합이 나오면, 가장 가까운 약국·병원을 지도에서 찾아 바로 상담하러 갈 수 있어요.",
-    href: "#",
+    href: APPS.map,
+  },
+  {
+    tag: "음성 안내",
+    title: "말로 물어보고 귀로 듣기",
+    body: "글씨를 읽기 어렵거나 손으로 쓰기 불편하시면, 말로 물어보세요. 음성으로 여쭙고 음성으로 알려드려요.",
+    href: APPS.voice,
   },
 ];
 
@@ -53,7 +67,7 @@ export default function Home() {
         </p>
         <div className="rise-3 mt-8 flex flex-wrap gap-4" id="start">
           <a
-            href="#"
+            href={APPS.chatbot}
             className="rounded-full bg-teal px-7 py-4 text-lg font-medium text-white hover:bg-teal-deep"
           >
             약 상담 시작하기
@@ -77,7 +91,7 @@ export default function Home() {
         <h2 className="mb-10 text-3xl font-bold tracking-tight text-ink">
           이런 걸 도와드려요
         </h2>
-        <div className="grid gap-6 sm:grid-cols-3">
+        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {FEATURES.map((f) => (
             <a
               key={f.tag}
