@@ -39,6 +39,18 @@ uvicorn app.main:app --reload
 > `API_BASE`를 `"http://localhost:8000"`으로 바꾸고 챗봇 쪽 CORS를 허용해야 합니다.
 > **가장 간단한 방법은 `/voice`로 접속하는 것입니다.**
 
+### Vercel 배포
+
+공개 배포본(https://voice-assistant.vercel.app)은 `/chat`을 **Vercel 서버리스 함수**
+(`api/chat.py`)가 처리하므로 별도 챗봇 서버 없이 단독으로 동작합니다.
+`vercel.json`의 rewrite가 `/chat` → `/api/chat`을 연결해 주기 때문에 `index.html`은
+고치지 않았습니다(10 챗봇의 `static/voice.html`과 동일하게 유지).
+
+> **엔진은 `apps/10-review-chatbot` 원본을 배포 편의상 `api/_bundle/`에 번들한 사본입니다.**
+> Vercel 함수가 Root Directory 바깥 파일을 번들하지 못해 복사했으며, 원본이 바뀌면
+> 다시 복사해야 합니다. 이유와 재복사 명령은 `api/chat.py` 상단 주석에 있습니다.
+> 리뷰 RAG는 키가 없어 기존 폴백 문구를 그대로 돌려줍니다(약물 상담은 키 없이 동작).
+
 ### 브라우저
 
 음성 인식은 **Chrome · Edge**에서 가장 잘 동작합니다. 마이크 권한을 허용해 주세요.
