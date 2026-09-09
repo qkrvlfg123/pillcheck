@@ -1,0 +1,27 @@
+# Render 블루프린트 — 필체크(PillCheck)
+#
+# 이 파일은 저장소 루트에 있어야 Render가 인식한다. 실제 앱은 하위 폴더에
+# 있으므로 rootDir 로 가리킨다. apps/* 의 나머지 앱은 Vercel에 배포되며
+# 이 파일과 무관하다.
+#
+# [키 없이 배포하는 전제]
+# 환경변수를 하나도 넣지 않은 상태로 동작한다.
+#   · 약물 상담(4축 상호작용 분석)  -> 그대로 동작. 식약처 DUR 미연동이므로
+#                                      데모 데이터 기반 "참고 표시(미검증)" 모드.
+#   · 쇼핑 리뷰 분석(RAG)           -> 안내 문구로 폴백. 켜려면 GEMINI_API_KEY 와
+#                                      PINECONE_API_KEY 를 Render 대시보드에 추가하고
+#                                      requirements-rag.txt 를 설치하도록 빌드 명령을 바꾼다.
+#
+# 이 서비스는 의료기기가 아니며 진단·처방을 하지 않는다. 최종 판단은 의사·약사가 한다.
+
+services:
+  - type: web
+    name: pillcheck-review-chatbot
+    runtime: python
+    plan: free
+    rootDir: apps/10-review-chatbot
+    buildCommand: pip install -r requirements.txt
+    # Render가 주는 $PORT 에 바인딩해야 한다. 앱 코드에는 바인딩 로직이 없다.
+    # 0.0.0.0 이 아니면 Render가 서비스에 접근하지 못한다.
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /health
