@@ -74,7 +74,6 @@ class handler(BaseHTTPRequestHandler):
             self._respond(500, {
                 "type": "error",
                 "answer": "잠시 문제가 생겼어요. 다시 말씀해 주세요.",
-                "detail": traceback.format_exc()[-900:],  # TODO: 원인 확인 후 제거
             })
 
     def _respond(self, status, body):
