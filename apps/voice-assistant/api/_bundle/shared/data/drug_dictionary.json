@@ -1,0 +1,323 @@
+[
+  {
+    "drug_id": "RX001",
+    "약물군": "항응고제",
+    "대표 성분(영문)": "와파린(Warfarin)",
+    "국내 제품명·별칭 예시": "쿠마딘|와파린나트륨|마레반",
+    "관련 질환": "심방세동·혈전·심혈관",
+    "비고": "INR 모니터링 약. 상호작용 매우 많음",
+    "therapeutic_class": "ANTICOAGULANT",
+    "ingredient_tags": [
+      "bleeding_risk"
+    ]
+  },
+  {
+    "drug_id": "RX002",
+    "약물군": "혈압약-칼슘채널차단제(CCB)",
+    "대표 성분(영문)": "암로디핀(Amlodipine)",
+    "국내 제품명·별칭 예시": "노바스크|아모디핀|애니디핀|오로디핀|스카드|레보텐션",
+    "관련 질환": "고혈압·협심증",
+    "비고": "계열 전반 자몽 주의(개별 약차 있음)",
+    "therapeutic_class": "ANTIHYPERTENSIVE_CCB",
+    "ingredient_tags": [
+      "bp_lowering"
+    ]
+  },
+  {
+    "drug_id": "RX003",
+    "약물군": "혈압약-이뇨제/ARB",
+    "대표 성분(영문)": "히드로클로로티아지드|발사르탄|칸데사르탄|텔미사르탄",
+    "국내 제품명·별칭 예시": "라식스|디오반|아타칸|미카르디스|코자(로사르탄)",
+    "관련 질환": "고혈압·심부전",
+    "비고": "고칼륨/저칼륨 주의(약별 상이)",
+    "therapeutic_class": "ANTIHYPERTENSIVE_DIURETIC_ARB",
+    "ingredient_tags": [
+      "bp_lowering",
+      "potassium"
+    ]
+  },
+  {
+    "drug_id": "RX004",
+    "약물군": "고지혈증약-스타틴",
+    "대표 성분(영문)": "심바스타틴|아토르바스타틴|로수바스타틴",
+    "국내 제품명·별칭 예시": "리피토|크레스토|조코|리바로|메바로친",
+    "관련 질환": "이상지질혈증",
+    "비고": "심바·로바스타틴이 자몽 영향 큼",
+    "therapeutic_class": "STATIN",
+    "ingredient_tags": [
+      "muscle_risk"
+    ]
+  },
+  {
+    "drug_id": "RX005",
+    "약물군": "항우울제-MAO억제제/일부",
+    "대표 성분(영문)": "(MAOI 계열)",
+    "국내 제품명·별칭 예시": "(처방 확인 필요)",
+    "관련 질환": "우울증·파킨슨",
+    "비고": "최신 SSRI는 티라민 위험 낮음",
+    "therapeutic_class": "ANTIDEPRESSANT_MAOI",
+    "ingredient_tags": [
+      "serotonergic",
+      "cns"
+    ]
+  },
+  {
+    "drug_id": "RX006",
+    "약물군": "파킨슨약",
+    "대표 성분(영문)": "레보도파(Levodopa)",
+    "국내 제품명·별칭 예시": "마도파|시네메트|퍼킨",
+    "관련 질환": "파킨슨병",
+    "비고": "고단백 식사와 시간 간격",
+    "therapeutic_class": "PARKINSON",
+    "ingredient_tags": [
+      "dopaminergic",
+      "cns"
+    ]
+  },
+  {
+    "drug_id": "RX007",
+    "약물군": "갑상선약",
+    "대표 성분(영문)": "레보티록신(Levothyroxine)",
+    "국내 제품명·별칭 예시": "씬지로이드|씬지록신",
+    "관련 질환": "갑상선기능저하",
+    "비고": "아침 공복, 음식과 2~4시간 간격",
+    "therapeutic_class": "THYROID",
+    "ingredient_tags": [
+      "absorption_sensitive"
+    ]
+  },
+  {
+    "drug_id": "RX008",
+    "약물군": "당뇨약",
+    "대표 성분(영문)": "메트포르민|글리메피리드",
+    "국내 제품명·별칭 예시": "다이아벡스|글루코파지|아마릴",
+    "관련 질환": "당뇨병",
+    "비고": "설포닐우레아는 저혈당 주의",
+    "therapeutic_class": "ANTIDIABETIC",
+    "ingredient_tags": [
+      "glucose_lowering"
+    ]
+  },
+  {
+    "drug_id": "RX009",
+    "약물군": "항생제-테트라/퀴놀론",
+    "대표 성분(영문)": "독시사이클린|시프로플록사신|레보플록사신",
+    "국내 제품명·별칭 예시": "(처방)|시프로바이|크라비트",
+    "관련 질환": "감염",
+    "비고": "유제품·칼슘과 2시간 간격",
+    "therapeutic_class": "ANTIBIOTIC",
+    "ingredient_tags": []
+  },
+  {
+    "drug_id": "RX010",
+    "약물군": "골다공증약-비스포스포네이트",
+    "대표 성분(영문)": "알렌드로네이트|리세드로네이트",
+    "국내 제품명·별칭 예시": "포사맥스|악토넬|맥스마빌",
+    "관련 질환": "골다공증",
+    "비고": "아침 공복 복용 후 30분~2시간",
+    "therapeutic_class": "BISPHOSPHONATE",
+    "ingredient_tags": [
+      "absorption_sensitive"
+    ]
+  },
+  {
+    "drug_id": "RX011",
+    "약물군": "천식약",
+    "대표 성분(영문)": "테오필린(Theophylline)",
+    "국내 제품명·별칭 예시": "테오둘|유니필",
+    "관련 질환": "천식·COPD",
+    "비고": "카페인 중복 주의",
+    "therapeutic_class": "BRONCHODILATOR_THEOPHYLLINE",
+    "ingredient_tags": [
+      "cns_stimulant",
+      "narrow_ti"
+    ]
+  },
+  {
+    "drug_id": "RX012",
+    "약물군": "소염진통제-NSAIDs",
+    "대표 성분(영문)": "이부프로펜|아스피린|나프록센|덱시부프로펜",
+    "국내 제품명·별칭 예시": "부루펜|아스피린|낙센|이지엔",
+    "관련 질환": "관절염·통증·심혈관",
+    "비고": "위장출혈·음주 주의(고령 위험)",
+    "therapeutic_class": "NSAID",
+    "ingredient_tags": [
+      "bleeding_risk",
+      "gi_risk",
+      "analgesic"
+    ]
+  },
+  {
+    "drug_id": "RX013",
+    "약물군": "해열진통제",
+    "대표 성분(영문)": "아세트아미노펜(Acetaminophen)",
+    "국내 제품명·별칭 예시": "타이레놀|써스펜",
+    "관련 질환": "통증·발열",
+    "비고": "음주 시 간독성",
+    "therapeutic_class": "ACETAMINOPHEN",
+    "ingredient_tags": [
+      "analgesic",
+      "hepatotoxic",
+      "antipyretic",
+      "acetaminophen"
+    ]
+  },
+  {
+    "drug_id": "RX014",
+    "약물군": "감기약(항히스타민 포함)",
+    "대표 성분(영문)": "클로르페니라민 등 복합",
+    "국내 제품명·별칭 예시": "(종합감기약)|판피린|판콜",
+    "관련 질환": "감기·알레르기",
+    "비고": "음주 시 졸음·낙상",
+    "therapeutic_class": "COLD_COMBO",
+    "ingredient_tags": [
+      "analgesic",
+      "antihistamine",
+      "cns",
+      "contains_acetaminophen",
+      "acetaminophen"
+    ]
+  },
+  {
+    "drug_id": "RX015",
+    "약물군": "위장약-H2억제제",
+    "대표 성분(영문)": "시메티딘|라니티딘|파모티딘",
+    "국내 제품명·별칭 예시": "잔탁|알비스|가스터",
+    "관련 질환": "위·십이지장",
+    "비고": "카페인·알코올 위염 악화",
+    "therapeutic_class": "H2_BLOCKER",
+    "ingredient_tags": [
+      "gi",
+      "cyp_inhibitor"
+    ]
+  },
+  {
+    "drug_id": "RX016",
+    "약물군": "제산제/골밀도 보조 등",
+    "대표 성분(영문)": "(칼슘·알루미늄 등)",
+    "국내 제품명·별칭 예시": "겔포스|알마겔",
+    "관련 질환": "위장·골다공증",
+    "비고": "다른 약 흡수 방해(간격)",
+    "therapeutic_class": "ANTACID",
+    "ingredient_tags": [
+      "absorption_interference"
+    ]
+  },
+  {
+    "drug_id": "RX017",
+    "약물군": "제산제-PPI(양성자펌프억제제)",
+    "대표 성분(영문)": "오메프라졸|에스오메프라졸|판토프라졸|라베프라졸",
+    "국내 제품명·별칭 예시": "넥시움|란스톤|파리에트|에소메졸",
+    "관련 질환": "위식도역류·위염",
+    "비고": "직장인 역류성식도염 최다 처방. 일부 약물 흡수·대사 영향",
+    "therapeutic_class": "PPI",
+    "ingredient_tags": [
+      "gi",
+      "absorption_interference"
+    ]
+  },
+  {
+    "drug_id": "RX018",
+    "약물군": "위장운동촉진제",
+    "대표 성분(영문)": "돔페리돈|모사프리드|이토프리드",
+    "국내 제품명·별칭 예시": "멕시롱|가스모틴|가나톤",
+    "관련 질환": "소화불량·기능성위장장애",
+    "비고": "돔페리돈은 QT연장 주의(특정약 병용)",
+    "therapeutic_class": "PROKINETIC",
+    "ingredient_tags": [
+      "gi",
+      "qt_risk"
+    ]
+  },
+  {
+    "drug_id": "RX019",
+    "약물군": "항우울제-SSRI",
+    "대표 성분(영문)": "에스시탈로프람|설트랄린|플루옥세틴|파록세틴",
+    "국내 제품명·별칭 예시": "렉사프로|졸로푸트|프로작|팍실",
+    "관련 질환": "우울·불안·공황",
+    "비고": "직장인 정신건강 1차 약. 세로토닌 관련 상호작용 주의",
+    "therapeutic_class": "ANTIDEPRESSANT_SSRI",
+    "ingredient_tags": [
+      "serotonergic",
+      "cns",
+      "bleeding_risk"
+    ]
+  },
+  {
+    "drug_id": "RX020",
+    "약물군": "항불안제-벤조디아제핀",
+    "대표 성분(영문)": "알프라졸람|로라제팜|디아제팜|클로나제팜",
+    "국내 제품명·별칭 예시": "자낙스|아티반|바리움|리보트릴",
+    "관련 질환": "불안·불면·공황",
+    "비고": "알코올·중추억제제 병용 시 호흡억제·과진정 위험",
+    "therapeutic_class": "BENZODIAZEPINE",
+    "ingredient_tags": [
+      "cns_depressant",
+      "sedative"
+    ]
+  },
+  {
+    "drug_id": "RX021",
+    "약물군": "수면제-Z드럭",
+    "대표 성분(영문)": "졸피뎀|조피클론",
+    "국내 제품명·별칭 예시": "스틸녹스|졸피드|이모반",
+    "관련 질환": "불면",
+    "비고": "알코올 병용 금기 수준. 몽유·기억상실 위험",
+    "therapeutic_class": "Z_DRUG",
+    "ingredient_tags": [
+      "cns_depressant",
+      "sedative"
+    ]
+  },
+  {
+    "drug_id": "RX022",
+    "약물군": "경구피임약(복합)",
+    "대표 성분(영문)": "에티닐에스트라디올+프로게스틴",
+    "국내 제품명·별칭 예시": "야스민|야즈|머시론|마이보라",
+    "관련 질환": "피임·생리조절",
+    "비고": "흡연·혈전 위험. 일부 약이 피임 효과 저하시킴",
+    "therapeutic_class": "ORAL_CONTRACEPTIVE",
+    "ingredient_tags": [
+      "hormonal",
+      "thrombosis_risk"
+    ]
+  },
+  {
+    "drug_id": "RX023",
+    "약물군": "편두통약-트립탄",
+    "대표 성분(영문)": "수마트립탄|졸미트립탄|나라트립탄",
+    "국내 제품명·별칭 예시": "이미그란|조믹|나라믹",
+    "관련 질환": "편두통",
+    "비고": "SSRI 병용 시 세로토닌증후군 주의",
+    "therapeutic_class": "TRIPTAN",
+    "ingredient_tags": [
+      "serotonergic",
+      "vasoconstrictor"
+    ]
+  },
+  {
+    "drug_id": "RX024",
+    "약물군": "카페인·각성 보조(약국/일반)",
+    "대표 성분(영문)": "카페인 무수물",
+    "국내 제품명·별칭 예시": "카페인정|에너지드링크|고카페인음료",
+    "관련 질환": "각성·피로",
+    "비고": "천식약·특정 위장약·항불안제와 상호작용. 과다 시 부정맥·불안",
+    "therapeutic_class": "CAFFEINE",
+    "ingredient_tags": [
+      "cns_stimulant"
+    ]
+  },
+  {
+    "drug_id": "RX025",
+    "약물군": "항히스타민(2세대·알레르기)",
+    "대표 성분(영문)": "세티리진|로라타딘|펙소페나딘",
+    "국내 제품명·별칭 예시": "지르텍|클라리틴|알레그라",
+    "관련 질환": "알레르기비염·두드러기",
+    "비고": "1세대보다 졸음 적으나 술·중추억제제와 병용 주의",
+    "therapeutic_class": "ANTIHISTAMINE_2ND",
+    "ingredient_tags": [
+      "cns",
+      "antihistamine"
+    ]
+  }
+]
