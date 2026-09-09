@@ -68,6 +68,8 @@ export default function Home() {
         <div className="rise-3 mt-8 flex flex-wrap gap-4" id="start">
           <a
             href={APPS.chatbot}
+            target="_blank"
+            rel="noopener noreferrer"
             className="rounded-full bg-teal px-7 py-4 text-lg font-medium text-white hover:bg-teal-deep"
           >
             약 상담 시작하기
@@ -96,6 +98,8 @@ export default function Home() {
             <a
               key={f.tag}
               href={f.href}
+              target="_blank"
+              rel="noopener noreferrer"
               className="group rounded-2xl border border-teal/15 bg-white p-7 transition hover:border-teal/40 hover:shadow-md"
             >
               <span className="text-sm font-semibold uppercase tracking-wide text-teal">
