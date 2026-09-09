@@ -57,7 +57,20 @@ class handler(BaseHTTPRequestHandler):
         try:
             length = int(self.headers.get("content-length") or 0)
             raw = self.rfile.read(length) if length else b"{}"
-            payload = json.loads(raw or b"{}")
+
+            try:
+                payload = json.loads(raw or b"{}")
+                if not isinstance(payload, dict):
+                    raise ValueError("본문이 JSON 객체가 아님")
+            except (UnicodeDecodeError, ValueError):
+                # 본문이 UTF-8 JSON 객체가 아닌 경우. 서버 잘못이 아니므로 400이다.
+                # (JSONDecodeError는 ValueError의 하위 클래스라 함께 잡힌다.)
+                self._respond(400, {
+                    "type": "error",
+                    "answer": "말씀을 제대로 받지 못했어요. 다시 한 번 말씀해 주세요.",
+                })
+                return
+
             text = str(payload.get("message") or "").strip()
             age = payload.get("age")
 
