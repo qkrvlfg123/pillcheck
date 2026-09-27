@@ -9,7 +9,34 @@
 
 ---
 
-## 이 프로젝트에서 직접 설계·판단한 것
+## 문제
+
+- 감기약·두통약처럼 흔한 약에도 **아세트아미노펜 같은 같은 성분이 겹쳐** 들어있어,
+  여러 개를 함께 먹으면 자기도 모르게 하루 최대량을 넘길 수 있습니다.
+- 복용약이 늘수록 상호작용 조합이 급격히 늘고(3개 → 3쌍, 5개 → 10쌍),
+  고령자는 특정 약(벤조디아제핀·NSAIDs 등)에서 낙상·출혈 위험이 커집니다.
+- 일반인은 성분명을 모르고 “혈압약”, “타이레놀”처럼 말하며,
+  LLM 챗봇에 물으면 **근거 없는 상호작용을 지어낼(환각) 위험**이 있습니다.
+
+→ 일반인의 말로 입력받되, 판정은 **공식 데이터**가 하고 **근거·출처를 함께** 보여주는 도구가 필요했습니다.
+
+## 데이터
+
+| 구분 | 출처 | 용도 |
+| --- | --- | --- |
+| 병용금기·노인주의·임부금기 | [식약처 DUR 품목정보 OpenAPI](https://www.data.go.kr/data/15059486/openapi.do) | 약물 판정의 최우선 근거 (`dur_client/dur_api.py`) |
+| 병용금기 약물 목록 | [한국의약품안전관리원 병용금기약물](https://www.data.go.kr/data/15089525) · [심평원 DUR 목록](https://www.data.go.kr/data/15127983) | DUR 검증 대조 |
+| 제품명 → 성분 | [식약처 의약품안전나라](https://nedrug.mfds.go.kr) · e약은요/제품허가정보 API | 제품명 매핑 40종, 미등재 제품 실시간 조회 |
+| 상호작용 근거 | [약학정보원](https://www.health.kr) | 상호작용 규칙 23건의 근거 문헌 |
+| 고령자 주의 약물 | [AGS Beers Criteria 2023](https://doi.org/10.1111/jgs.18372) | 노인주의 축 |
+| 질환-음식·영양 | 대한소화기학회·대한당뇨병학회·한국형 통풍 진료지침 등 | 영양 안내 16종 |
+
+- DUR 키가 없을 때 쓰는 폴백 데이터(`drug_drug_interactions_demo.json`)는 위 근거로 직접 구축했으며,
+  각 항목에 `UNVERIFIED_DEMO`로 표시됩니다.
+- 규칙별 출처 전체: [`packages/shared/SOURCES.md`](packages/shared/SOURCES.md) ·
+  근거 장부: [`packages/shared/EVIDENCE_LEDGER.md`](packages/shared/EVIDENCE_LEDGER.md)
+
+## 방법 — 이 프로젝트에서 직접 설계·판단한 것
 
 단순히 챗봇을 만드는 대신, "약물 안전 정보를 어떻게 정직하고 정확하게 전달할까"를
 중심 문제로 놓고 다음을 직접 설계했습니다.
@@ -78,13 +105,69 @@
                  └─ 모두 packages/shared 의 4축 약물 엔진을 공유
 ```
 
-## 빠르게 확인하기
+## 결과 — 예시 출력
+
+`python3 drug_interaction.py`를 실행하면 3개 데모 시나리오를 분석합니다.
+전체 출력은 [`demo_output.txt`](packages/shared/engine/demo_output.txt)
+(영양 안내: [`nutrition_demo.txt`](packages/shared/engine/nutrition_demo.txt),
+증상 안내: [`symptom_demo.txt`](packages/shared/engine/symptom_demo.txt)) 참고.
+
+| 시나리오 | 종합 위험도 | 잡아낸 위험 |
+| --- | --- | --- |
+| 게보린 + 타이레놀 + 자낙스 (70세) | **높음** | 아세트아미노펜 중복(간독성, 근거 강) · 벤조디아제핀 고령자 낙상 위험(Beers 2023) |
+| 노바스크 + 크라비트 + 리피토 | **보통** | 스타틴 + 항생제 근육독성 주의(✓원문확인) |
+| 와파린 + 부루펜 + 넥시움 | **높음** | 와파린 + NSAIDs 출혈 위험 · 출혈 위험 약물 중복 · NSAIDs 고령자 주의 |
+
+첫 번째 시나리오 출력 중 일부:
+
+```
+[입력한 약]
+  · 게보린  ->  게보린 (아세트아미노펜/이소프로필안티피린/무수카페인) (PROD:게보린)
+  · 타이레놀  ->  해열진통제 (RX013)
+  · 자낙스  ->  항불안제-벤조디아제핀 (RX020)
+
+[근거] [!] 식약처 DUR 미연동 -> 데모 데이터로 참고 표시 (미검증)
+
+[종합 위험도] 높음
+  이 판단의 이유:
+    · 같은 성분이 겹쳐 위험한 중복이 1건 있어요
+
+[효능군·성분 중복]
+  [위험 · 근거 강] 아세트아미노펜 중복 (간독성 위험) — 게보린 (...), 해열진통제
+      · 근거: 식약처 타이레놀 허가사항: 일일 최대 4,000mg 초과 금지, 아세트아미노펜 함유 다른 제품과 병용 금지 명문(2026).
+
+[노인주의]
+  · 항불안제-벤조디아제핀 · 근거 강: 고령자에서 낙상·인지저하·섬망 위험이 커요.
+      출처: 미국노인의학회 Beers Criteria 2023 (AGS), 2023 (https://doi.org/10.1111/jgs.18372)
+```
+
+- 상호작용 규칙 23건 모두 출처·근거수준이 붙어 있으며(강 2 / 중 14 / 약 7),
+  원문확인 12건 / 기전추론 11건으로 검증 상태를 구분해 표시합니다.
+- `verify_evidence.py`가 모든 규칙의 출처 완비 여부를 자동 검증합니다.
+
+## 실행 방법
+
+### 약물 엔진 (키 불필요, 표준 라이브러리만 사용)
 
 ```bash
 cd packages/shared/engine
 python3 drug_interaction.py       # 약물 상호작용 4축 분석 데모
+python3 nutrition_guide.py        # 직업·나이별 영양 안내 데모
+python3 symptom_guide.py          # 증상별 약 계열·임부 주의 데모
 python3 verify_evidence.py        # 근거 완비 여부 자동 검증 + 근거 장부 생성
 ```
+
+### 앱별 실행
+
+| 앱 | 실행 | 필요한 키 |
+| --- | --- | --- |
+| 08 랜딩 | `cd apps/08-saas-landing && npm install && npm run dev` → http://localhost:3000 | 없음 |
+| 09 블로그 | Supabase SQL Editor에서 `supabase/schema.sql` 실행 → `.env.local` 작성(`.env.local.example` 참고) → `cd apps/09-health-blog && npm install && npm run dev` → http://localhost:3000 | `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` |
+| 10 챗봇 | `cd apps/10-review-chatbot && pip install -r requirements.txt && uvicorn app.main:app --reload` → http://localhost:8000 | 약물 상담은 없음 · RAG는 `GEMINI_API_KEY`, `PINECONE_API_KEY`(+ `pip install -r requirements-rag.txt`) · 공식 DUR 판정은 `DUR_SERVICE_KEY` (`.env.example` 참고) |
+| 11 약국지도 | `index.html`에 카카오 JavaScript 키 입력 → `cd apps/11-pharmacy-map && python -m http.server 5500` → http://localhost:5500 | 카카오 JavaScript 키 (카카오 개발자 콘솔에서 `http://localhost:5500` 도메인 등록 필요) |
+| 음성 | 10 챗봇 서버 실행 후 http://localhost:8000/voice | 10 챗봇과 동일 |
+
+앱별 상세 설정은 각 폴더의 `README.md`를 참고하세요. 10 챗봇은 [`render.yaml`](render.yaml)로 Render에 배포할 수 있습니다.
 
 ## 폴더 구조
 
@@ -97,9 +180,13 @@ pillcheck/
 │   ├── 11-pharmacy-map/     약국·병원 지도 (카카오맵)
 │   └── voice-assistant/     음성 비서 (브라우저 음성 + 챗봇)
 ├── packages/shared/         4축 약물 엔진 · 데이터 · 근거
+│   ├── engine/              4축 엔진 · 영양/증상 안내 · 근거 검증 스크립트
+│   ├── data/                약물사전 · 제품-성분 매핑 · 상호작용 규칙 · 출처
+│   ├── dur_client/          식약처 DUR · e약은요 API 클라이언트
 │   ├── SOURCES.md           근거 출처 정리
 │   └── EVIDENCE_LEDGER.md   근거 장부 (자동 생성)
-└── docs/                    개발 가이드
+├── archive/                 더 이상 쓰지 않는 이전 버전
+└── render.yaml              10 챗봇 Render 배포 설정
 ```
 
 ## 기술 스택
