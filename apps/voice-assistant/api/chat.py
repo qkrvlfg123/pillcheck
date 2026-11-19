@@ -6,8 +6,8 @@
 
 [왜 엔진 복사본(_bundle/)이 여기에 있는가]
 --------------------------------------------------
-저장소 규칙(CLAUDE.md)은 약물 엔진을 새로 만들지 말고
-`packages/shared/engine/drug_interaction.py`를 쓰라고 한다. 이 원칙은 유효하다.
+이 저장소의 원칙은 약물 엔진을 새로 만들지 말고
+`packages/shared/engine/drug_interaction.py`를 그대로 쓰는 것이다. 이 원칙은 유효하다.
 다만 Vercel 서버리스 함수는 **자기 프로젝트 Root Directory 바깥의 파일을
 번들에 포함하지 못한다.** 이 프로젝트의 Root Directory는 `apps/voice-assistant`
 이므로 `packages/shared/`나 `apps/10-review-chatbot/shared/`를 그대로 참조할 수
