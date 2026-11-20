@@ -1,6 +1,9 @@
 """
 약물 상담 로직 — 4축 엔진을 챗봇용으로 감싼다.
-키(Pinecone/LLM) 없이도 항상 작동한다. 판정은 shared 엔진(→식약처 DUR)이 한다.
+키(Pinecone/LLM) 없이도 항상 작동한다. 판정은 shared 엔진의 자체 규칙 데이터로 한다.
+
+한계: 문장에서 사전에 있는 약 이름만 찾는다. 사전에 없는 약 이름은 문장에서 알아볼 수 없어
+      검사에서 빠지며, 빠졌다는 사실도 알려 주지 못한다. "안 먹어요" 같은 부정 표현도 구분하지 못한다.
 """
 
 import os
@@ -29,44 +32,63 @@ def extract_drugs_detailed(text: str):
     사용자 메시지에서 약을 뽑되, 정확한 것과 일상어(대략적)를 구분한다.
     반환: {"precise": [이름...], "colloquial": [(일상어, drug_id)...]}
     """
-    precise = set()
+    precise = []          # 문장에 나온 순서와 무관하게, 긴 이름부터 찾은 순서
+    seen_ids = set()
     colloquial = []
 
-    # 1) 정확한 매칭 (제품명·성분명)
-    for d in engine.DRUG_DICT:
-        for token in str(d.get("국내 제품명·별칭 예시", "")).split("|"):
-            token = token.strip()
-            if len(token) >= 2 and token in text:
-                precise.add(token)
-        for token in str(d.get("대표 성분(영문)", "")).split("|"):
-            ko = token.split("(")[0].strip()
-            if len(ko) >= 2 and ko in text:
-                precise.add(ko)
+    # 1) 정확한 매칭 (제품명·성분명·별칭)
+    #    긴 이름부터 찾고, 찾은 자리는 가린다. 이렇게 하지 않으면 약 하나가 여러 개로 세어진다.
+    #    예: "타이레놀8시간이알서방정" 안의 "타이레놀"이 또 잡혀 '아세트아미노펜 중복'으로 나오던 문제
+    masked = text
+    for name in _CANDIDATE_NAMES:
+        if name not in masked:
+            continue
+        masked = masked.replace(name, "▪" * len(name))
+        d = engine.resolve_drug(name)
+        if d is None or d["drug_id"] in seen_ids:     # 같은 약의 다른 표기는 한 번만
+            continue
+        seen_ids.add(d["drug_id"])
+        precise.append(name)
 
+    # 2) 일상어 매칭 (혈압약, 당뇨약 등) — 정확한 걸로 안 잡힌 것만
+    #    '혈압', '당뇨' 같은 질환명은 약이 아니므로 쓰지 않는다.
+    #    ("혈압이 높은데 타이레놀 먹어도 되나"에서 혈압약을 먹는 것으로 해석하던 문제)
+    precise_rx = {rx for n in precise for rx in engine.rule_ids_of(engine.resolve_drug(n))}
+    for word in sorted(_COLLOQUIAL.keys(), key=len, reverse=True):
+        if not word.endswith(_DRUG_WORD_ENDINGS) or word not in masked:
+            continue
+        drug_id = _COLLOQUIAL[word]
+        masked = masked.replace(word, "▪" * len(word))
+        if drug_id not in precise_rx and drug_id not in [c[1] for c in colloquial]:
+            colloquial.append((word, drug_id))
+
+    return {"precise": precise, "colloquial": colloquial}
+
+
+# 일상어 중 '약'을 가리키는 말의 끝 글자. 질환명('혈압', '당뇨', '고지혈증')은 제외된다.
+_DRUG_WORD_ENDINGS = ("약", "제", "항히스타민")
+
+
+def _build_candidate_names():
+    """문장에서 찾을 약 이름 후보(두 글자 이상), 긴 것부터."""
+    names = set()
+    for d in engine.DRUG_DICT:
+        for fld in ("국내 제품명·별칭 예시", "대표 성분(영문)"):
+            for part in str(d.get(fld, "")).split("|"):
+                for token in part.replace(")", "(").split("("):
+                    token = token.strip()
+                    if len(token) >= 2 and engine.resolve_drug(token) is not None:
+                        names.add(token)
     try:
         import product_resolver
         for p in product_resolver._PRODUCT_MAP:
-            for name in [p["product"]] + p.get("aliases", []):
-                if name in text:
-                    precise.add(name)
+            names.update(n for n in [p["product"]] + p.get("aliases", []) if len(n) >= 2)
     except Exception:
         pass
+    return sorted(names, key=len, reverse=True)
 
-    # 2) 일상어 매칭 (혈압약, 당뇨약 등) — 정확한 걸로 안 잡힌 것만
-    #    긴 단어부터 매칭하고, 이미 매칭된 텍스트 위치는 가려서 부분중복 방지
-    #    (예: "소염진통제"가 잡히면 그 안의 "진통제"는 다시 안 잡힘)
-    masked = text
-    for word in sorted(_COLLOQUIAL.keys(), key=len, reverse=True):
-        if word in masked:
-            drug_id = _COLLOQUIAL[word]
-            # 이미 이 계열이 정확히 잡혔으면 스킵
-            if not any(drug_id == _find_id(pname) for pname in precise):
-                if drug_id not in [c[1] for c in colloquial]:
-                    colloquial.append((word, drug_id))
-            # 매칭된 부분을 가려서 부분 문자열 재매칭 방지
-            masked = masked.replace(word, "▪" * len(word))
 
-    return {"precise": list(precise), "colloquial": colloquial}
+_CANDIDATE_NAMES = _build_candidate_names()
 
 
 def _find_id(name):
@@ -89,8 +111,10 @@ def extract_drug_names(text: str) -> list:
 
 def is_drug_question(text: str) -> bool:
     """이 메시지가 약물 상담인지 판단."""
-    keywords = ["약", "먹어도", "복용", "같이", "함께", "상호작용", "부작용", "병용"]
-    has_keyword = any(k in text for k in keywords)
+    # '약', '같이', '함께'만으로는 판단하지 않는다.
+    # ("예약 변경하고 싶어요", "같이 쓰기 좋은 청소기 추천"이 약물 상담으로 가던 문제)
+    keywords = ["먹어도", "복용", "상호작용", "부작용", "병용", "약을", "약이랑", "약하고", "약 먹", "무슨 약", "어떤 약"]
+    has_keyword = any(k in text for k in keywords) and "예약" not in text
     has_drug = len(extract_drug_names(text)) > 0
     return has_drug or has_keyword
 

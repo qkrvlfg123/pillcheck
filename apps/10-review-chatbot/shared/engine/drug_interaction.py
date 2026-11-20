@@ -11,8 +11,10 @@
   [축 4] 노인/연령 주의 : 특정 연령대에 주의가 필요한 약
 
 판정 원칙 (중요):
-  - 약물 상호작용의 '공식' 근거는 식약처 DUR API다(dur_client 참조).
-  - DUR 미연동 시에는 데모 데이터로 '참고 표시'하되 미검증임을 명시한다.
+  - 판정은 이 저장소의 규칙 데이터(data/drug_drug_interactions_demo.json)로 한다.
+  - 식약처 DUR API 클라이언트(dur_client)는 들어 있지만 아직 판정에 연결되어 있지 않다.
+    그래서 결과에는 항상 '자체 구축 규칙 기준 · 참고용'이라고 표시한다.
+  - 약 이름은 정확히 일치할 때만 해석한다. 못 찾은 약이 있으면 '낮음'이 아니라 '판단 불가'로 답한다.
   - 이 엔진은 스스로 의학적 판단을 만들지 않는다. 시너지·처방은 다루지 않는다.
 
 * 의료기기가 아니며 진단·처방을 하지 않는다.
@@ -22,6 +24,7 @@
 
 import json
 import os
+import re
 import sys
 from itertools import combinations
 
@@ -101,44 +104,6 @@ DUPLICATE_TAG_RULES = {
 }
 
 
-def resolve_drug(query):
-    """
-    약 이름/제품명/ID → 표준 약물 dict.
-    순서: (1) 약물사전 직접 매칭 (2) 제품명→성분 해석기 (게보린 등)
-    제품에서 온 경우 성분 태그를 담은 임시 dict를 만들어 반환한다.
-    """
-    q = query.strip()
-
-    # (1) 약물사전 직접
-    for d in DRUG_DICT:
-        if d["drug_id"] == q:
-            return d
-    for d in DRUG_DICT:
-        haystack = " ".join([
-            d.get("약물군", ""),
-            d.get("대표 성분(영문)", ""),
-            d.get("국내 제품명·별칭 예시", ""),
-        ])
-        if q in haystack:
-            return d
-
-    # (2) 제품명 해석기 (게보린/이지엔6에이스 등)
-    if _PRODUCT_RESOLVER:
-        p = product_resolver.resolve_product(q)
-        if p:
-            return {
-                "drug_id": "PROD:" + p["product"],
-                "약물군": p["product"] + " (" + "/".join(p.get("ingredients", [])) + ")",
-                "대표 성분(영문)": "/".join(p.get("ingredients", [])),
-                "국내 제품명·별칭 예시": p["product"],
-                "therapeutic_class": p.get("class_hint", ""),
-                "ingredient_tags": p.get("ingredient_tags", []),
-                "_from_product": True,
-                "_caution": p.get("caution", ""),
-            }
-    return None
-
-
 def _ingredient_names(drug):
     raw = drug.get("대표 성분(영문)", "")
     names = []
@@ -149,15 +114,164 @@ def _ingredient_names(drug):
     return names
 
 
+# ── 이름 해석 ────────────────────────────────────────────────────────
+#
+# 약 이름은 '정확히 일치'할 때만 인정한다.
+# 이전에는 입력이 사전 문자열의 일부이기만 하면 매칭했는데(q in haystack),
+# 빈 문자열이나 "제" 같은 한 글자가 와파린으로, "진통제"가 소염진통제로 해석되는 오류가 있었다.
+# 약 안전 안내에서 엉뚱한 약으로 해석하는 것은 "모른다"고 답하는 것보다 위험하므로,
+# 일치하지 않으면 해석하지 않는다(unresolved).
+
+# 제형 접미사: "리피토정" → "리피토"처럼 접미사를 뗀 이름으로 한 번 더 찾는다.
+_FORM_SUFFIXES = ("필름코팅정", "연질캡슐", "서방정", "현탁액", "내복액", "캡슐", "시럽", "정", "액")
+
+
+def _norm(text):
+    """비교용 정규화: 공백 제거 + 대소문자 무시."""
+    return re.sub(r"\s+", "", str(text)).casefold()
+
+
+def _strip_form(q):
+    for suf in _FORM_SUFFIXES:
+        if q.endswith(suf) and len(q) - len(suf) >= 2:
+            return q[:-len(suf)]
+    return None
+
+
+def _dict_tokens(d):
+    """약물사전 한 항목에서 '이 이름이면 이 약'이라고 볼 수 있는 이름 조각을 뽑는다."""
+    raw = []
+    # 계열 이름이 "분류-세부" 꼴이면 세부 쪽만 이름으로 인정한다.
+    # 앞쪽 분류어("위장약", "혈압약", "수면제")는 여러 약을 가리키는 일상어라서 엔진이 임의로 고르지 않는다.
+    # (일상어는 채팅 쪽의 일상어 매핑이 '대략 확인'이라는 안내와 함께 처리한다.)
+    group = d.get("약물군", "")
+    detail = group.split("-", 1)[1] if "-" in group else group
+    raw += re.split(r"[/()·]", detail)
+    for fld in ("대표 성분(영문)", "국내 제품명·별칭 예시"):
+        for part in str(d.get(fld, "")).split("|"):
+            raw += re.split(r"[()]", part)
+    tokens = set()
+    for t in raw:
+        t = _norm(t)
+        # 설명 문구("처방 확인 필요", "MAOI 계열", "… 등 복합")는 이름이 아니다
+        if len(t) < 2 or any(x in t for x in ("처방", "계열", "복합", "등")):
+            continue
+        tokens.add(t)
+    tokens.add(_norm(d.get("약물군", "")))       # 계열 전체 이름은 항상 인정
+    return tokens
+
+
+def _build_dict_index():
+    """이름 → 약물사전 항목. 둘 이상의 약에 걸리는 이름("혈압약", "항우울제")은 넣지 않는다."""
+    owners = {}
+    for d in DRUG_DICT:
+        for t in _dict_tokens(d):
+            owners.setdefault(t, set()).add(d["drug_id"])
+    by_id = {d["drug_id"]: d for d in DRUG_DICT}
+    return {t: by_id[next(iter(ids))] for t, ids in owners.items() if len(ids) == 1}
+
+
+_DICT_BY_ID = {d["drug_id"]: d for d in DRUG_DICT}
+_DICT_INDEX = _build_dict_index()
+
+# 제품의 효능군(class_hint) → 약물사전 ID. 사전의 therapeutic_class와 이름이 다른 것만 따로 적는다.
+_CLASS_TO_RX = {d.get("therapeutic_class"): d["drug_id"] for d in DRUG_DICT if d.get("therapeutic_class")}
+_CLASS_TO_RX.update({
+    "ANTIHYPERTENSIVE_ARB": "RX003",
+    "COMBO_ANALGESIC": "RX013",
+    "NSAID_COMBO": "RX012",
+    "ANTIDIABETIC_METFORMIN": "RX008",
+    "ANTIDIABETIC_SU": "RX008",
+    "ANTIBIOTIC_QUINOLONE": "RX009",
+})
+# 성분 이름 → 약물사전 ID (복합제의 각 성분에도 상호작용 규칙이 적용되도록)
+_INGREDIENT_TO_RX = {}
+for _d in DRUG_DICT:
+    for _name in _ingredient_names(_d):
+        _n = _norm(_name)
+        if len(_n) >= 3 and "복합" not in _n and "계열" not in _n:
+            _INGREDIENT_TO_RX[_n] = _d["drug_id"]
+_INGREDIENT_TO_RX[_norm("카페인")] = "RX024"            # 무수카페인·카페인무수물 표기 통일
+_INGREDIENT_TO_RX[_norm("아세틸살리실산")] = "RX012"      # 아스피린의 성분명
+
+
+def _product_rule_ids(p):
+    """제품이 어떤 약물사전 항목(들)에 해당하는지. 상호작용 규칙은 이 ID로 찾는다.
+
+    이전에는 제품에 'PROD:제품명'이라는 ID만 붙여서, 제품명으로 입력한 약은
+    병용금기·주의 규칙이 하나도 걸리지 않았다(와파린 + 타이레놀정 → '낮음').
+    """
+    ids = []
+    cls = _CLASS_TO_RX.get(p.get("class_hint", ""))
+    if cls:
+        ids.append(cls)
+    for ing in p.get("ingredients", []):
+        n = _norm(ing)
+        for name, rx in _INGREDIENT_TO_RX.items():
+            if name in n and rx not in ids:
+                ids.append(rx)
+    return ids
+
+
+def _from_product(p):
+    return {
+        "drug_id": "PROD:" + p["product"],
+        "약물군": p["product"] + " (" + "/".join(p.get("ingredients", [])) + ")",
+        "대표 성분(영문)": "/".join(p.get("ingredients", [])),
+        "국내 제품명·별칭 예시": p["product"],
+        "therapeutic_class": p.get("class_hint", ""),
+        "ingredient_tags": p.get("ingredient_tags", []),
+        "rule_ids": _product_rule_ids(p),
+        "_from_product": True,
+        "_caution": p.get("caution", ""),
+    }
+
+
+def _resolve_exact(q):
+    if q in _DICT_BY_ID:                         # 약물사전 ID 직접 입력
+        return _DICT_BY_ID[q]
+    if _PRODUCT_RESOLVER:                        # 제품명이 계열명보다 구체적이므로 먼저 본다
+        p = product_resolver.resolve_product(q)
+        if p:
+            return _from_product(p)
+    return _DICT_INDEX.get(_norm(q))
+
+
+def resolve_drug(query):
+    """
+    약 이름/제품명/ID → 표준 약물 dict. 못 찾으면 None.
+    순서: (1) 약물사전 ID (2) 제품명 (3) 약물사전의 성분명·별칭·계열명 (4) 제형 접미사를 떼고 다시
+    모든 단계가 정확 일치이며, 두 글자 미만 입력은 해석하지 않는다.
+    """
+    q = str(query or "").strip()
+    if len(_norm(q)) < 2:
+        return None
+    d = _resolve_exact(q)
+    if d is None:
+        stripped = _strip_form(_norm(q))
+        if stripped:
+            d = _resolve_exact(stripped)
+    return d
+
+
+def rule_ids_of(drug):
+    """상호작용 규칙을 찾을 때 쓰는 약물사전 ID 목록."""
+    return drug.get("rule_ids") or [drug["drug_id"]]
+
+
 # ── 축 1: 병용금기/주의 ──────────────────────────────────────────────
 
 def _axis_pairwise(drugs):
-    """데모 데이터 기반 병용금기/주의 (DUR 미연동 시). 약 쌍마다 검사."""
-    ids = [d["drug_id"] for d in drugs]
-    found = []
-    for a, b in combinations(sorted(set(ids)), 2):
+    """자체 구축 규칙 기반 병용금기/주의. 약 쌍마다 검사한다.
+    복합제는 여러 약물사전 ID를 가지므로(게보린 = 아세트아미노펜 + 카페인), ID 집합끼리 비교한다."""
+    found, seen = [], set()
+    for x, y in combinations(drugs, 2):
+        ids_x, ids_y = set(rule_ids_of(x)), set(rule_ids_of(y))
         for rule in DEMO_INTERACTIONS:
-            if {rule["drug_a"], rule["drug_b"]} == {a, b}:
+            a, b = rule["drug_a"], rule["drug_b"]
+            hit = (a in ids_x and b in ids_y) or (b in ids_x and a in ids_y)
+            if hit and rule["interaction_id"] not in seen:
+                seen.add(rule["interaction_id"])
                 found.append(rule)
     found.sort(key=lambda r: SEVERITY_ORDER.get(r["severity"], 0), reverse=True)
     return found
@@ -191,12 +305,13 @@ def _axis_duplicate(drugs):
 
 # ── 축 3: 다제약물 위험 ──────────────────────────────────────────────
 
-def _axis_polypharmacy(drugs):
+def _axis_polypharmacy(drugs, n_unresolved=0):
     """
     약 개수에 따른 상호작용 쌍 수와 다제약물 위험 수준을 계산.
     쌍의 수 = nC2. 약이 늘수록 상호작용 가능성이 급증함을 보여준다.
+    사전에서 찾지 못한 약도 '복용 중인 약'이므로 개수에 포함한다.
     """
-    n = len(drugs)
+    n = len(drugs) + n_unresolved
     pairs = n * (n - 1) // 2
     if n >= 5:
         level, note = "HIGH", "5가지 이상은 '다제약물'로 분류돼요. 상호작용 위험이 크게 늘어 정기적인 약사 검토(약물 재조정)를 권해요."
@@ -240,7 +355,27 @@ def _axis_elderly(drugs, age=None):
 
 # ── 통합 진입점 ──────────────────────────────────────────────────────
 
-def _overall_risk(axis1, axis2, axis3, axis4):
+def _overall_risk(axis1, axis2, axis3, axis4, unresolved=()):
+    """
+    확인하지 못한 약이 있으면: 위험·주의가 발견된 경우에는 그 레벨을 유지하되 이유에 덧붙이고,
+    아무것도 발견되지 않은 경우에는 '낮음'이 아니라 '판단 불가'로 답한다.
+    (모르는 약을 검사하지 못한 것과, 검사해서 문제가 없는 것은 다르다.)
+    """
+    risk = _overall_risk_known(axis1, axis2, axis3)
+    if axis3["count"] < 2:
+        return {"level": "판단 불가", "code": "UNKNOWN",
+                "reasons": ["약이 2가지 이상 있어야 함께 먹을 때의 위험을 확인할 수 있어요"]}
+    if unresolved:
+        names = ", ".join(unresolved)
+        if risk["code"] == "LOW":
+            return {"level": "판단 불가", "code": "UNKNOWN",
+                    "reasons": [f"확인하지 못한 약이 {len(unresolved)}개 있어요: {names}",
+                                "이 약들은 검사하지 못했기 때문에 위험도를 말씀드릴 수 없어요. 약사에게 확인하세요"]}
+        risk["reasons"].append(f"확인하지 못한 약 {len(unresolved)}개({names})는 검사에 포함되지 않았어요")
+    return risk
+
+
+def _overall_risk_known(axis1, axis2, axis3):
     """
     종합 위험도 레벨을 '규칙 기반'으로 결정하고, 그 레벨이 나온 이유를 함께 반환한다.
     점수(숫자)를 쓰지 않는다. 대신 어떤 발견이 레벨을 결정했는지 명시한다.
@@ -290,28 +425,41 @@ def check(drug_queries, age=None):
     age: (선택) 나이. 노인주의 축에 사용.
     반환: 4개 축의 분석 결과 + 근거 모드(DUR/데모).
     """
-    resolved, unresolved = [], []
+    resolved, unresolved, seen = [], [], set()
     for q in drug_queries:
+        q = str(q or "").strip()
+        if not q:
+            continue                                  # 빈 입력은 약이 아니다
         d = resolve_drug(q)
-        if d:
+        if d is None:
+            if q not in unresolved:
+                unresolved.append(q)
+        elif d["drug_id"] not in seen:                # 같은 약을 두 번 적어도 한 번만 센다
+            seen.add(d["drug_id"])                    # (타이레놀 + 타이레놀정 → 1개)
             resolved.append((q, d))
-        else:
-            unresolved.append(q)
-    drugs = [d for _, d in resolved]
 
-    # 근거 모드
-    dur_mode = _DUR_AVAILABLE and bool(os.environ.get("DUR_SERVICE_KEY"))
+    # 제품명과 그 제품의 성분명을 함께 적은 경우("타이레놀, 아세트아미노펜")는 같은 약으로 본다.
+    # 단일 성분 제품일 때만 해당한다. 서로 다른 제품 두 개(타이레놀 + 써스펜)는 그대로 중복으로 잡힌다.
+    single = {d["rule_ids"][0] for _, d in resolved
+              if d.get("_from_product") and len(d.get("rule_ids", [])) == 1}
+    resolved = [(q, d) for q, d in resolved
+                if not (not d.get("_from_product") and d["drug_id"] in single
+                        and _norm(q) in _INGREDIENT_TO_RX)]
+    drugs = [d for _, d in resolved]
 
     a1 = _axis_pairwise(drugs)
     a2 = _axis_duplicate(drugs)
-    a3 = _axis_polypharmacy(drugs)
+    a3 = _axis_polypharmacy(drugs, len(unresolved))
     a4 = _axis_elderly(drugs, age)
 
     return {
-        "mode": "DUR_OFFICIAL" if dur_mode else "DEMO_UNVERIFIED",
+        # 판정은 항상 이 저장소의 규칙 데이터로 한다. 식약처 DUR API는 아직 판정에 연결되어 있지 않다.
+        # (이전에는 키만 있으면 'DUR_OFFICIAL'로 표시했지만 실제로는 DUR을 호출하지 않았다.)
+        "mode": "LOCAL_RULES",
+        "age": age,
         "resolved": resolved,
         "unresolved": unresolved,
-        "overall_risk": _overall_risk(a1, a2, a3, a4),
+        "overall_risk": _overall_risk(a1, a2, a3, a4, unresolved),
         "axis1_interactions": a1,
         "axis2_duplicates": a2,
         "axis3_polypharmacy": a3,
@@ -339,10 +487,7 @@ def format_report(result):
     for q in result["unresolved"]:
         L.append(f"  · {q}  ->  (사전에서 찾지 못함)")
 
-    if result["mode"] == "DEMO_UNVERIFIED":
-        L.append("\n[근거] [!] 식약처 DUR 미연동 -> 데모 데이터로 참고 표시 (미검증)")
-    else:
-        L.append("\n[근거] [O] 식약처 DUR 공식 데이터 기준")
+    L.append(f"\n[근거] 자체 구축 규칙 {len(DEMO_INTERACTIONS)}건 기준 (식약처 DUR API는 아직 연결되지 않음 · 참고용)")
 
     # 종합 위험도 (근거 명시)
     risk = result["overall_risk"]
@@ -353,7 +498,12 @@ def format_report(result):
 
     # 축 3: 다제약물 (전체 요약 먼저)
     poly = result["axis3_polypharmacy"]
-    L.append(f"\n[다제약물] 총 {poly['count']}가지 · 검사한 조합 {poly['pairs']}쌍")
+    n_known = len(result["resolved"])
+    if result["unresolved"]:
+        L.append(f"\n[다제약물] 총 {poly['count']}가지 · 가능한 조합 {poly['pairs']}쌍 "
+                 f"(찾지 못한 약을 뺀 {n_known * (n_known - 1) // 2}쌍만 검사)")
+    else:
+        L.append(f"\n[다제약물] 총 {poly['count']}가지 · 검사한 조합 {poly['pairs']}쌍")
     if poly["note"]:
         tag = SEVERITY_LABEL.get(poly["level"], "")
         L.append(f"  [{tag}] {poly['note']}")
@@ -380,7 +530,10 @@ def format_report(result):
     # 축 2: 효능군 중복
     L.append("\n[효능군·성분 중복]")
     if not result["axis2_duplicates"]:
-        L.append("  겹치는 성분이 없어요.")
+        if result["unresolved"]:
+            L.append("  확인된 약 사이에는 겹치는 성분이 없어요. (찾지 못한 약은 검사하지 못했어요)")
+        else:
+            L.append("  겹치는 성분이 없어요. (미등재가 안전을 뜻하진 않아요)")
     for f in result["axis2_duplicates"]:
         tag = SEVERITY_LABEL.get(f["severity"], f["severity"])
         lvl = f.get("evidence_level_ko", "")
@@ -396,7 +549,8 @@ def format_report(result):
     # 축 4: 노인주의
     elderly = [f for f in result["axis4_elderly"] if f["applies"]]
     if elderly:
-        L.append("\n[노인주의]")
+        # 나이를 모르면 모든 사용자에게 단정하지 않고 조건을 붙여 안내한다
+        L.append("\n[노인주의]" if result.get("age") is not None else "\n[노인주의 — 65세 이상인 경우]")
         for f in elderly:
             lvl = f.get("evidence_level_ko", "")
             lvl_str = f" · 근거 {lvl}" if lvl else ""
@@ -413,7 +567,16 @@ def format_report(result):
     return "\n".join(L)
 
 
+# README와 demo_output.txt에 실린 시나리오. 실행:  python drug_interaction.py > demo_output.txt
+DEMO_SCENARIOS = [
+    ("게보린+타이레놀+자낙스 (70세)", ["게보린", "타이레놀", "자낙스"], 70),
+    ("노바스크+클래리스로마이신+리피토", ["노바스크", "클래리스로마이신", "리피토"], None),
+    ("와파린+부루펜+넥시움", ["와파린", "부루펜", "넥시움"], None),
+    ("와파린+탁센+사전에 없는 약", ["와파린", "탁센", "플라빅스"], None),
+]
+
 if __name__ == "__main__":
-    print(format_report(check(["와파린", "부루펜", "타이레놀"])))
-    print("\n\n")
-    print(format_report(check(["렉사프로", "이미그란", "자낙스", "스틸녹스", "판피린"], age=70)))
+    for title, names, age in DEMO_SCENARIOS:
+        print(f"########## {title} ##########")
+        print(format_report(check(names, age=age)))
+        print("\n")

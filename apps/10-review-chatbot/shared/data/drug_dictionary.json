@@ -319,5 +319,29 @@
       "cns",
       "antihistamine"
     ]
+  },
+  {
+    "drug_id": "RX026",
+    "약물군": "항생제-마크로라이드",
+    "대표 성분(영문)": "클래리스로마이신(Clarithromycin)|에리트로마이신(Erythromycin)",
+    "국내 제품명·별칭 예시": "(처방)|클래리트로마이신",
+    "관련 질환": "호흡기·세균 감염",
+    "비고": "CYP3A4 억제. 스타틴 병용 시 근육독성 주의",
+    "therapeutic_class": "ANTIBIOTIC_MACROLIDE",
+    "ingredient_tags": [
+      "cyp_inhibitor"
+    ]
+  },
+  {
+    "drug_id": "RX027",
+    "약물군": "항결핵제-리팜핀",
+    "대표 성분(영문)": "리팜핀(Rifampin)",
+    "국내 제품명·별칭 예시": "(처방)|리팜피신",
+    "관련 질환": "결핵",
+    "비고": "간 대사효소 유도. 경구피임약 효과 저하",
+    "therapeutic_class": "RIFAMYCIN",
+    "ingredient_tags": [
+      "cyp_inducer"
+    ]
   }
 ]
