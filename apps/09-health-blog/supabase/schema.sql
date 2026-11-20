@@ -99,3 +99,10 @@ create trigger likes_count_trigger
 -- 확인 방법: 로그인 A로 글을 쓰고, 로그인 B로 그 글을 수정 시도하면
 -- 막혀야 정상입니다. (본인 글만 수정 가능)
 -- ============================================================
+
+-- 작성자 이메일 가리기
+-- posts 는 누구나 읽을 수 있으므로 author_email 에 주소 전체를 두지 않는다.
+-- 앱은 앞 두 글자만 남긴 값을 저장한다(lib/maskEmail.ts). 이전에 저장된 행은 아래 문장으로 한 번 바꾼다.
+update public.posts
+   set author_email = left(split_part(author_email, '@', 1), 2) || '***'
+ where author_email like '%@%';

@@ -12,7 +12,7 @@ const FEATURES = [
   {
     tag: "상호작용 확인",
     title: "이 약들, 같이 먹어도 될까요?",
-    body: "여러 약을 함께 복용할 때 위험한 조합을 식약처 공식 데이터(DUR)로 확인해드려요. 병용금기부터 성분 중복까지.",
+    body: "여러 약을 함께 복용할 때 위험한 조합을 자체 정리한 상호작용 규칙으로 확인해드려요. 병용금기부터 성분 중복까지.",
     href: APPS.chatbot,
   },
   {
@@ -63,7 +63,7 @@ export default function Home() {
         </h1>
         <p className="rise-3 mt-6 max-w-2xl text-xl leading-relaxed text-ink/70">
           여러 약을 먹어도 괜찮은지, 뭘 먹으면 좋을지 — 어렵게 찾아보지 마세요.
-          식약처 공식 데이터를 바탕으로 쉽게 안내해드립니다.
+          문헌을 바탕으로 정리한 규칙으로 쉽게 안내해드립니다.
         </p>
         <div className="rise-3 mt-8 flex flex-wrap gap-4" id="start">
           <a
@@ -150,8 +150,8 @@ export default function Home() {
       <section className="mb-16 rounded-2xl border border-amber/30 bg-amber/5 p-6">
         <p className="text-base leading-relaxed text-ink/70">
           <span className="font-semibold text-amber">참고 안내</span> · 본 서비스는
-          의료기기가 아니며 진단·처방을 하지 않습니다. 식약처 공식 데이터를 조회해
-          안내하는 참고용 서비스이며, 데이터베이스에 없다고 해서 안전한 것은 아닙니다.
+          의료기기가 아니며 진단·처방을 하지 않습니다. 자체 정리한 규칙 23건을 기준으로
+          안내하는 참고용 서비스이며(식약처 DUR과는 아직 연결되어 있지 않습니다), 규칙에 없다고 해서 안전한 것은 아닙니다.
           복용 전 반드시 의사·약사와 상담하세요.
         </p>
       </section>

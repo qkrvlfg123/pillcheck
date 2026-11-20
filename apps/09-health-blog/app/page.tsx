@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { maskEmail } from "@/lib/maskEmail";
 
 export default async function Home({
   searchParams,
@@ -95,7 +96,7 @@ export default async function Home({
                   {post.content}
                 </p>
                 <div style={{ marginTop: 14, display: "flex", gap: 16, fontSize: 13, color: "var(--text-dim)" }}>
-                  <span>{post.author_email ?? "익명"}</span>
+                  <span>{maskEmail(post.author_email) ?? "익명"}</span>
                   <span>{new Date(post.created_at).toLocaleDateString("ko-KR")}</span>
                   <span style={{ color: "var(--teal)" }}>♥ {post.likes_count}</span>
                 </div>
