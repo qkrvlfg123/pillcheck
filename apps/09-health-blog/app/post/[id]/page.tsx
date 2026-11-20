@@ -1,6 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { maskEmail } from "@/lib/maskEmail";
 import { revalidatePath } from "next/cache";
 import LikeButton from "@/components/LikeButton";
 import Markdown from "@/components/Markdown";
@@ -82,7 +83,7 @@ export default async function PostPage({
             borderBottom: "1px solid var(--line)",
           }}
         >
-          <span>{post.author_email ?? "익명"}</span>
+          <span>{maskEmail(post.author_email) ?? "익명"}</span>
           <span>{new Date(post.created_at).toLocaleDateString("ko-KR")}</span>
         </div>
 

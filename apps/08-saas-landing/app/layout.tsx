@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "필체크 — 여러 약, 같이 먹어도 괜찮을까요",
   description:
-    "여러 약을 함께 복용할 때의 위험을 식약처 공식 데이터로 확인하는 서비스.",
+    "여러 약을 함께 복용할 때의 위험을 자체 정리한 상호작용 규칙으로 확인하는 참고용 서비스.",
 };
 
 export default function RootLayout({

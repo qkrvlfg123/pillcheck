@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { maskEmail } from "@/lib/maskEmail";
 import { revalidatePath } from "next/cache";
 import MarkdownEditor from "@/components/MarkdownEditor";
 
@@ -17,7 +18,7 @@ export default async function WritePage() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) redirect("/login");
     await supabase.from("posts").insert({
-      title, content, author_id: user.id, author_email: user.email,
+      title, content, author_id: user.id, author_email: maskEmail(user.email),
     });
     revalidatePath("/");
     redirect("/");
