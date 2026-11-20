@@ -202,6 +202,4 @@ Next.js · TypeScript · Tailwind · Supabase · FastAPI · Python · Gemini · 
 
 ---
 
-<sub>이 프로젝트는 부트캠프 학습 과정(《요즘 바이브 코딩》 챕터 8·9·10)에서 출발했으며,
-위에 정리한 약물 안전 엔진·근거 체계·데이터셋 설계는 학습 범위를 넘어 직접 구축한 부분입니다.
-개발에 Claude Code를 활용했습니다.</sub>
+<sub>개발에 Claude Code를 활용했습니다.</sub>
