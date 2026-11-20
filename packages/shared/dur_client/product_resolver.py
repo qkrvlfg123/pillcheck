@@ -15,6 +15,7 @@
 
 import json
 import os
+import re
 import sys
 
 HERE = os.path.dirname(__file__)
@@ -37,19 +38,27 @@ except Exception:
     _EDRUG_AVAILABLE = False
 
 
+def _norm(text):
+    """비교용 정규화: 공백 제거 + 대소문자 무시."""
+    return re.sub(r"\s+", "", str(text)).casefold()
+
+
 def resolve_product(query):
     """
     제품명 → {"product", "ingredients", "ingredient_tags", "source", ...} 또는 None.
     로컬 매핑 우선, 없으면 식약처 API(가능 시).
     """
-    q = query.strip()
+    q = _norm(query)
+    if len(q) < 2:
+        return None
 
-    # 1순위: 로컬 검증 매핑 (제품명·별칭 부분매칭)
+    # 1순위: 로컬 검증 매핑 (제품명·별칭 정확 일치)
+    # 이전에는 부분 일치(q in name or name in q)였는데, 같은 브랜드의 다른 제품으로 잘못 해석됐다.
+    # 예: '이지엔6'(시리즈 5종 중 불명) → 아세트아미노펜 제품, '타이레놀콜드' → 일반 타이레놀
     for p in _PRODUCT_MAP:
         names = [p["product"]] + p.get("aliases", [])
-        for name in names:
-            if q == name or q in name or name in q:
-                return {**p, "resolved_by": "local_map"}
+        if any(q == _norm(name) for name in names):
+            return {**p, "resolved_by": "local_map"}
 
     # 2순위: 식약처 e약은요 API
     if _EDRUG_AVAILABLE and os.environ.get("DUR_SERVICE_KEY"):

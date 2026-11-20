@@ -13,7 +13,7 @@
 | **중(MODERATE)** | 약학정보원·진료지침·교과서 등 널리 인정된 기전/가이드라인 |
 | **약(LIMITED)** | 일반적 주의사항·경향 수준 — 참고용, 개인차 큼 |
 
-현재 데모 상호작용 23건: 강 2 / 중 14 / 약 7. 각 규칙의 evidence_note에
+현재 상호작용 규칙 23건: 강 2 / 중 15 / 약 6. 각 규칙의 evidence_note에
 구체 근거가, source_ids에 출처가 연결되어 있습니다.
 `engine/verify_evidence.py`로 모든 규칙의 출처·근거수준 완비 여부를 코드 검증합니다.
 
@@ -56,9 +56,9 @@
   https://www.data.go.kr/data/15059486/openapi.do
   (병용금기·노인주의·특정연령금기·용량주의 등, 무료·자동승인)
 
-`packages/shared/dur_client/dur_api.py`가 이 API를 호출합니다.
-데모 데이터(`drug_drug_interactions_demo.json`)는 DUR 연동 전 시연·폴백용이며
-각 항목에 `evidence_status: UNVERIFIED_DEMO`로 표시되어 있습니다.
+`packages/shared/dur_client/dur_api.py`에 이 API의 클라이언트가 있습니다(엔진의 판정에는 아직 연결되지 않음).
+판정에 쓰는 규칙 데이터(`drug_drug_interactions_demo.json`)는 직접 구축한 것이며
+각 항목에 근거수준(`evidence_level`)과 검증 상태(`verification`)가 표시되어 있습니다.
 
 ### 참고: DUR 검증 시 대조 가능한 공개 자료
 - 와파린 + NSAIDs 출혈 위험: RE-LY 연구 사후분석, 약학정보원 와파린 정보
