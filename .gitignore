@@ -17,6 +17,10 @@ dist/
 build/
 out/
 
+# ML 실험: 데이터·모델은 스크립트로 재생성 (원본 데이터 재배포 방지)
+ml/ddi-structure-model/data/
+ml/ddi-structure-model/models/
+
 # OS
 .DS_Store
 Thumbs.db
