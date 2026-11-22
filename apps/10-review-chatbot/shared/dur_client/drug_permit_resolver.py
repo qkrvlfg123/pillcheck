@@ -76,7 +76,12 @@ def _get(params, retries=2):
             if e.code in (500, 502, 503) and attempt < retries:
                 time.sleep(0.6 * (attempt + 1))
                 continue
-            raise ResolveError(f"HTTP {e.code}") from e
+            detail = ""
+            try:
+                detail = e.read(300).decode("utf-8", "replace").replace("\n", " ").strip()
+            except Exception:
+                pass
+            raise ResolveError(f"HTTP {e.code}: {detail[:200]}") from e
         except urllib.error.URLError as e:
             if attempt < retries:
                 time.sleep(0.6 * (attempt + 1))

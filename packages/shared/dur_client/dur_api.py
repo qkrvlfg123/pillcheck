@@ -107,7 +107,12 @@ def _get(endpoint, params, _retries=2):
             if e.code in (500, 502, 503) and attempt < _retries:
                 time.sleep(0.6 * (attempt + 1))
                 continue
-            raise DURError(f"HTTP {e.code} 오류: {endpoint}") from e
+            detail = ""
+            try:
+                detail = e.read(300).decode("utf-8", "replace").replace("\n", " ").strip()
+            except Exception:
+                pass
+            raise DURError(f"HTTP {e.code} 오류: {endpoint} :: {detail[:200]}") from e
         except urllib.error.URLError as e:
             last_err = e
             if attempt < _retries:
