@@ -198,6 +198,29 @@ def test_every_rule_points_to_existing_drugs():
         assert r["drug_a"] in ids and r["drug_b"] in ids, r["interaction_id"]
 
 
+def test_dur_is_opt_in_and_default_is_local():
+    """기본(use_dur 미지정)은 로컬 규칙만. 결과에 dur 키가 없고 mode는 LOCAL_RULES."""
+    r = check(["타이레놀", "게보린"])
+    assert r["mode"] == "LOCAL_RULES"
+    assert "dur" not in r
+
+
+def test_dur_augment_is_offline_safe_without_key():
+    """DUR 키가 없으면 네트워크 호출 없이 available=False로만 표시하고 로컬 결과는 유지한다."""
+    saved = getattr(engine.dur_api, "SERVICE_KEY", "")
+    try:
+        engine.dur_api.SERVICE_KEY = ""          # 키 없는 상황을 강제(네트워크 호출 안 함)
+        r = engine.check(["타이레놀", "게보린"], use_dur=True)
+        assert r["dur"]["available"] is False
+        # 로컬 판정은 그대로 살아 있어야 한다
+        assert "overall_risk" in r and "axis1_interactions" in r
+        # 보고서가 깨지지 않고, 거짓으로 공식 데이터를 조회했다고 하지 않는다
+        rep = engine.format_report(r)
+        assert "식약처 DUR 공식 데이터 실시간 조회" not in rep
+    finally:
+        engine.dur_api.SERVICE_KEY = saved
+
+
 if __name__ == "__main__":
     tests = [(k, v) for k, v in sorted(globals().items()) if k.startswith("test_") and callable(v)]
     failed = 0

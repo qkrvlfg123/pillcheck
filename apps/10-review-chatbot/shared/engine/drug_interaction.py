@@ -11,9 +11,12 @@
   [축 4] 노인/연령 주의 : 특정 연령대에 주의가 필요한 약
 
 판정 원칙 (중요):
-  - 판정은 이 저장소의 규칙 데이터(data/drug_drug_interactions_demo.json)로 한다.
-  - 식약처 DUR API 클라이언트(dur_client)는 들어 있지만 아직 판정에 연결되어 있지 않다.
-    그래서 결과에는 항상 '자체 구축 규칙 기준 · 참고용'이라고 표시한다.
+  - 기본 판정은 이 저장소의 규칙 데이터(data/drug_drug_interactions_demo.json)로 한다.
+  - check(..., use_dur=True)를 주면 식약처 DUR 공식 데이터(dur_client)로 보강한다(네트워크 필요):
+    허가정보 API로 약→품목기준코드를 구한 뒤 DUR 병용금기·노인주의·임부금기를 실시간 조회해
+    결과의 result["dur"]에 담고, 출처를 '식약처 DUR'로 표시한다. 키/네트워크가 없으면
+    available=False로만 두고 로컬 판정은 그대로 유지한다(기본값 use_dur=False).
+  - DUR 병용금기는 '절대 금기'만 등재하므로 로컬 규칙을 대체하지 않고 보강만 한다.
   - 약 이름은 정확히 일치할 때만 해석한다. 못 찾은 약이 있으면 '낮음'이 아니라 '판단 불가'로 답한다.
   - 이 엔진은 스스로 의학적 판단을 만들지 않는다. 시너지·처방은 다루지 않는다.
 
@@ -44,6 +47,12 @@ try:
     _PRODUCT_RESOLVER = True
 except Exception:
     _PRODUCT_RESOLVER = False
+
+try:
+    import dur_check
+    _DUR_CHECK = True
+except Exception:
+    _DUR_CHECK = False
 
 
 def _load(name):
@@ -419,11 +428,45 @@ def _overall_risk_known(axis1, axis2, axis3):
             "reasons": ["등록된 위험·주의 조합이 발견되지 않았어요 (미등재가 안전을 뜻하진 않아요)"]}
 
 
-def check(drug_queries, age=None):
+def _english_ingredient(drug):
+    """약물사전 항목의 '대표 성분(영문)'에서 영문 성분명을 뽑는다. 예: '와파린(Warfarin)' → 'Warfarin'.
+    허가정보 API의 item_ingr_name(영문)로 쓰려는 것. 없으면 None."""
+    raw = drug.get("대표 성분(영문)", "")
+    m = re.findall(r"\(([A-Za-z][A-Za-z0-9 .\-]+)\)", raw)
+    return m[0].strip() if m else None
+
+
+def augment_with_dur(result, with_cautions=True):
+    """
+    check() 결과에 식약처 DUR 공식 데이터를 보강한다(네트워크 필요).
+    - result["dur"]: {"available", "combination_taboo":[...], "profiles":[...], "unresolved":[...]}
+      · combination_taboo 는 DUR이 '절대 병용금기'로 등재한 쌍(출처='식약처 DUR').
+      · profiles[].cautions 에 노인주의·임부금기 등 품목 단위 주의.
+    - 로컬 규칙 판정(axis1~4)은 그대로 두고 DUR을 별도로 덧붙인다(대체하지 않음).
+    키가 없거나 조회 실패 시 available=False로만 표시하고 로컬 결과는 유지한다.
+    """
+    if not (_DUR_CHECK and _DUR_AVAILABLE and getattr(dur_api, "SERVICE_KEY", "")):
+        result["dur"] = {"available": False,
+                         "reason": "DUR 서비스키가 없거나 DUR 모듈을 불러오지 못했습니다."}
+        return result
+    drugs = [{"label": d["약물군"], "product_name": q, "eng_ingredient": _english_ingredient(d)}
+             for q, d in result["resolved"]]
+    try:
+        dur = dur_check.check_interactions(drugs, with_cautions=with_cautions)
+    except Exception as e:
+        result["dur"] = {"available": False, "reason": f"DUR 조회 실패: {e}"}
+        return result
+    result["dur"] = {"available": True, **dur}
+    result["mode"] = "LOCAL_RULES+DUR"
+    return result
+
+
+def check(drug_queries, age=None, use_dur=False):
     """
     drug_queries: 약 이름/ID 목록.
     age: (선택) 나이. 노인주의 축에 사용.
-    반환: 4개 축의 분석 결과 + 근거 모드(DUR/데모).
+    use_dur: True면 식약처 DUR 공식 데이터로 보강(네트워크 필요). 기본은 로컬 규칙만.
+    반환: 4개 축의 분석 결과 + 근거 모드.
     """
     resolved, unresolved, seen = [], [], set()
     for q in drug_queries:
@@ -452,9 +495,8 @@ def check(drug_queries, age=None):
     a3 = _axis_polypharmacy(drugs, len(unresolved))
     a4 = _axis_elderly(drugs, age)
 
-    return {
-        # 판정은 항상 이 저장소의 규칙 데이터로 한다. 식약처 DUR API는 아직 판정에 연결되어 있지 않다.
-        # (이전에는 키만 있으면 'DUR_OFFICIAL'로 표시했지만 실제로는 DUR을 호출하지 않았다.)
+    result = {
+        # 로컬 규칙 판정이 기본. use_dur=True면 아래에서 식약처 DUR 공식 데이터로 보강한다.
         "mode": "LOCAL_RULES",
         "age": age,
         "resolved": resolved,
@@ -465,6 +507,9 @@ def check(drug_queries, age=None):
         "axis3_polypharmacy": a3,
         "axis4_elderly": a4,
     }
+    if use_dur:
+        augment_with_dur(result)
+    return result
 
 
 def _src_links(source_ids):
@@ -487,7 +532,11 @@ def format_report(result):
     for q in result["unresolved"]:
         L.append(f"  · {q}  ->  (사전에서 찾지 못함)")
 
-    L.append(f"\n[근거] 자체 구축 규칙 {len(DEMO_INTERACTIONS)}건 기준 (식약처 DUR API는 아직 연결되지 않음 · 참고용)")
+    dur = result.get("dur")
+    if dur and dur.get("available"):
+        L.append(f"\n[근거] 자체 구축 규칙 {len(DEMO_INTERACTIONS)}건 + 식약처 DUR 공식 데이터 실시간 조회 · 참고용")
+    else:
+        L.append(f"\n[근거] 자체 구축 규칙 {len(DEMO_INTERACTIONS)}건 기준 (식약처 DUR API는 이번 조회에 사용되지 않음 · 참고용)")
 
     # 종합 위험도 (근거 명시)
     risk = result["overall_risk"]
@@ -560,6 +609,27 @@ def format_report(result):
             src_names = _src_links(f.get("source_ids", []))
             if src_names:
                 L.append(f"      출처: {src_names}")
+
+    # 식약처 DUR 공식 조회 결과 (use_dur=True일 때만)
+    dur = result.get("dur")
+    if dur and dur.get("available"):
+        L.append("\n[식약처 DUR 공식 조회]")
+        taboo = dur.get("combination_taboo", [])
+        if taboo:
+            for h in taboo:
+                L.append(f"  [병용금기 · 식약처 DUR] {h['a']} + {h['b']}")
+                L.append(f"      · 사유: {h['reason']}")
+        else:
+            L.append("  · DUR에 등재된 '절대 병용금기' 조합은 없어요. "
+                     "(DUR 병용금기는 절대 금기만 등재하며, 미등재가 안전을 뜻하진 않아요)")
+        for p in dur.get("profiles", []):
+            cz = [f"{k} {len(v)}건" for k, v in (p.get("cautions") or {}).items() if v]
+            if cz:
+                L.append(f"  · {p['label']} (품목기준코드 {p['item_seq']}): {', '.join(cz)}")
+        if dur.get("unresolved"):
+            L.append(f"  · 허가정보에서 품목코드를 찾지 못한 약: {', '.join(dur['unresolved'])}")
+    elif dur and not dur.get("available"):
+        L.append(f"\n[식약처 DUR 공식 조회] 사용 안 됨 — {dur.get('reason', '')}")
 
     L.append("\n" + "-" * 62)
     L.append("※ 참고용입니다. 진단·처방이 아니며 최종 판단은 의사·약사가 합니다.")

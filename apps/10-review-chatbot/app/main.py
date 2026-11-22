@@ -43,6 +43,10 @@ class ChatRequest(BaseModel):
 class DrugCheckRequest(BaseModel):
     drugs: list[str]
     age: int | None = None
+    use_dur: bool = False     # True면 식약처 DUR 공식 데이터로 보강(서버에서만 키 사용, 느릴 수 있음)
+
+
+MAX_DRUGS = 15               # 남용·과도한 외부 호출 방지
 
 
 @app.get("/common-drugs")
@@ -77,20 +81,61 @@ def chat(req: ChatRequest):
         return answer_review_question(text)
 
 
+def _dur_key_present():
+    import sys
+    sys.path.append(os.path.join(HERE, "..", "shared", "engine"))
+    try:
+        import dur_api
+        return bool(getattr(dur_api, "SERVICE_KEY", ""))
+    except Exception:
+        return False
+
+
+@app.get("/dur-status")
+def dur_status():
+    """식약처 DUR 보강을 쓸 수 있는지(서버에 키가 있는지)만 알려준다. 키 값은 노출하지 않는다."""
+    return {"dur_available": _dur_key_present()}
+
+
 @app.post("/drug-check")
 def drug_check(req: DrugCheckRequest):
-    """약 목록을 직접 받아 상호작용 검사 (약 이름 배열)."""
+    """
+    약 목록을 받아 상호작용을 검사한다(약 이름 배열).
+
+    use_dur=True면 식약처 DUR 공식 데이터로 보강한다. 이때 서비스키는 **서버 환경변수
+    (DUR_SERVICE_KEY)**로만 쓰이며 응답에 노출되지 않는다(프록시). 키가 없거나 조회에
+    실패하면 dur.available=False로만 표시하고 로컬 규칙 결과는 그대로 돌려준다.
+    DUR 조회는 외부 API 호출이라 수 초 걸릴 수 있다.
+    """
     import sys
     sys.path.append(os.path.join(HERE, "..", "shared", "engine"))
     import drug_interaction as engine
 
-    result = engine.check(req.drugs, age=req.age)
-    return {
+    drugs = [d for d in (req.drugs or []) if str(d).strip()][:MAX_DRUGS]
+    result = engine.check(drugs, age=req.age, use_dur=req.use_dur)
+
+    resp = {
         "type": "drug",
         "mode": result["mode"],
         "overall_risk": result["overall_risk"],
         "report": engine.format_report(result),
     }
+    dur = result.get("dur")
+    if dur is not None:
+        # 프런트가 직접 렌더링할 수 있도록 구조화된 DUR 결과도 함께 준다(키는 포함 안 됨).
+        resp["dur"] = {
+            "available": dur.get("available", False),
+            "reason": dur.get("reason"),
+            "combination_taboo": dur.get("combination_taboo", []),
+            "cautions": [
+                {"label": p["label"], "item_seq": p["item_seq"],
+                 "types": {k: len(v) for k, v in (p.get("cautions") or {}).items() if v}}
+                for p in dur.get("profiles", [])
+                if p.get("item_seq") and (p.get("taboo_partners") or p.get("cautions"))
+            ],
+            "unresolved": dur.get("unresolved", []),
+        }
+    return resp
 
 
 # 정적 파일(웹 채팅 화면)

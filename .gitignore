@@ -11,6 +11,9 @@ __pycache__/
 venv/
 .venv/
 
+# 런타임 캐시 (DUR 제품→품목코드 해석 결과, API로 재생성됨)
+dur_resolve_cache.json
+
 # 빌드 산출물
 .next/
 dist/
