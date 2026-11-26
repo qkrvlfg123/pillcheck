@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-// 랜딩용 데모. 실제 판정은 10번 챗봇의 자체 규칙 엔진이 담당(식약처 DUR API는 미연결).
+// 랜딩용 데모. 실제 판정은 10번 챗봇의 자체 규칙 엔진이 담당(식약처 DUR 보강은 챗봇 /drug-check 의 use_dur 옵션).
 // 일상어(감기약·두통약)로 보여주고, 누르면 제품명 예시까지 펼쳐진다.
 type Demo = {
   label: string;      // 버튼에 보이는 일상어

@@ -151,7 +151,7 @@ export default function Home() {
         <p className="text-base leading-relaxed text-ink/70">
           <span className="font-semibold text-amber">참고 안내</span> · 본 서비스는
           의료기기가 아니며 진단·처방을 하지 않습니다. 자체 정리한 규칙 23건을 기준으로
-          안내하는 참고용 서비스이며(식약처 DUR과는 아직 연결되어 있지 않습니다), 규칙에 없다고 해서 안전한 것은 아닙니다.
+          안내하는 참고용 서비스이며(식약처 DUR 조회는 선택 기능이며 기본 판정에는 쓰이지 않습니다), 규칙에 없다고 해서 안전한 것은 아닙니다.
           복용 전 반드시 의사·약사와 상담하세요.
         </p>
       </section>

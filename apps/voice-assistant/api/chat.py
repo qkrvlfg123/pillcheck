@@ -4,7 +4,7 @@
 10-review-chatbot의 FastAPI `@app.post("/chat")` 라우팅을 그대로 옮긴 것이다.
 약 이야기면 약물 상담, 아니면 리뷰 RAG 폴백 문구를 돌려준다.
 
-[왜 엔진 복사본(_bundle/)이 여기에 있는가]
+[엔진 복사본(_bundle/)을 둔 이유]
 --------------------------------------------------
 이 저장소의 원칙은 약물 엔진을 새로 만들지 말고
 `packages/shared/engine/drug_interaction.py`를 그대로 쓰는 것이다. 이 원칙은 유효하다.
@@ -22,13 +22,16 @@
        apps/voice-assistant/api/_bundle/shared/engine/
     cp apps/10-review-chatbot/shared/data/*.json \
        apps/voice-assistant/api/_bundle/shared/data/
+    cp apps/10-review-chatbot/shared/dur_client/{dur_api,dur_check,drug_permit_resolver,product_resolver}.py \
+       apps/voice-assistant/api/_bundle/shared/dur_client/
 
 디렉터리 구조를 원본과 똑같이 맞춰 둔 이유도 이것이다. 두 파일 모두 경로를
 `__file__` 기준 상대경로로 잡기 때문에, 구조만 같으면 코드를 한 줄도 고치지
 않은 채 복사본을 그대로 쓸 수 있고 `diff`로 원본과의 어긋남을 바로 확인할 수 있다.
 
-DUR 클라이언트(`dur_api.py`)는 일부러 번들하지 않았다. 없으면 엔진이
-`_DUR_AVAILABLE = False`로 떨어져 키 없이 DEMO 모드로 동작한다.
+DUR 클라이언트(`dur_client/`)도 번들에 들어 있지만, 이 함수는 엔진을 use_dur 없이
+호출하므로 식약처 DUR을 조회하지 않고 항상 자체 규칙(LOCAL_RULES)으로만 판정한다.
+e약은요 클라이언트(`edrug_api.py`)는 번들하지 않았다.
 """
 
 from http.server import BaseHTTPRequestHandler

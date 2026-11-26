@@ -52,13 +52,13 @@ def verify():
 
 
 def build_ledger():
-    """근거 장부(EVIDENCE_LEDGER.md) 생성 — 모든 근거를 한 파일로."""
+    """근거 장부(EVIDENCE_LEDGER.md) 생성. 모든 근거를 한 파일로 모은다."""
     sources = _load("evidence_sources.json")["sources"]
     interactions = _load("drug_drug_interactions_demo.json")
 
     L = ["# 근거 장부 (Evidence Ledger)", "",
-         "필체크의 모든 규칙과 그 근거를 한눈에 정리한 자동 생성 문서입니다.",
-         "`verify_evidence.py`로 생성됩니다. 규칙이 바뀌면 다시 생성하세요.", ""]
+         "필체크의 상호작용 규칙과 근거를 정리한 자동 생성 문서임.",
+         "`verify_evidence.py`로 생성함. 규칙이 바뀌면 다시 생성해야 함.", ""]
 
     # 근거수준 요약
     from collections import Counter
@@ -71,10 +71,10 @@ def build_ledger():
              f"기전추론(원문미확인) {vc.get('MECHANISM_INFERRED',0)}건")
     L.append(f"- 공식 근거원: {len(sources)}곳")
     L.append("")
-    L.append("> **정직성 고지**: '원문확인'은 이 프로젝트에서 약학정보원·식약처 등 "
-             "실제 출처를 확인한 것입니다. '기전추론'은 널리 알려진 약리 기전이나 "
+    L.append("> 검증 상태 구분: '원문확인'은 이 프로젝트에서 약학정보원·식약처 등 "
+             "실제 출처를 확인한 것임. '기전추론'은 널리 알려진 약리 기전이나 "
              "이 프로젝트에서 특정 원문을 대조하지는 않은 것으로, 참고용이며 "
-             "실제 판정은 식약처 DUR·약사 확인이 우선합니다.")
+             "실제 판정은 식약처 DUR·약사 확인이 우선함.")
     L.append("")
 
     # 근거원 목록
